@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerador de Nomes, Personas e CPF (Testes) | MMC Codes</title>
-    <meta name="description" content="Gerador Avançado de Nomes e Personas com CPF Válido para Testes de Software. Crie nomes criativos para bebês, empresas, startups e RPG. Ferramenta gratuita.">
-    <meta name="keywords" content="gerador de nomes, gerador de cpf, gerador de cpf válido, criador de personas, gerador de dados fake, nomes para empresas, nomes para rpg">
+    <meta name="description" content="Gerador Avançado de Nomes e Personas Fake com CPF Válido, RG, Cartão de Crédito e Dados Completos para Testes de Software. Ferramenta gratuita.">
+    <meta name="keywords" content="gerador de nomes, gerador de cpf, gerador de cpf válido, criador de personas, gerador de dados fake, cartao de credito fake, fake name generator brasil">
     <meta name="author" content="MMC Codes">
     
     <!-- Tailwind CSS via CDN -->
@@ -61,6 +61,20 @@
         
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Estilo para as divisões da persona */
+        .persona-section {
+            @apply bg-slate-50 dark:bg-slate-900/50 p-5 rounded-xl border border-slate-100 dark:border-slate-800;
+        }
+        .persona-label {
+            @apply text-slate-400 dark:text-slate-500 font-bold uppercase text-[10px] tracking-wider mb-1 block;
+        }
+        .persona-value {
+            @apply text-slate-800 dark:text-slate-200 font-medium text-sm md:text-base;
+        }
+        .persona-value.mono {
+            @apply font-mono font-semibold;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-darker dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col selection:bg-blue-200 selection:text-blue-900 dark:selection:bg-blue-900 dark:selection:text-blue-100">
@@ -96,7 +110,7 @@
                 <button class="tab-btn active flex-1 py-5 px-4 md:px-6 text-sm md:text-base font-bold whitespace-nowrap text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none" data-target="baby">👶 Bebês</button>
                 <button class="tab-btn flex-1 py-5 px-4 md:px-6 text-sm md:text-base font-bold whitespace-nowrap text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none" data-target="company">🏢 Empresas</button>
                 <button class="tab-btn flex-1 py-5 px-4 md:px-6 text-sm md:text-base font-bold whitespace-nowrap text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none" data-target="rpg">🐉 RPG</button>
-                <button class="tab-btn flex-1 py-5 px-4 md:px-6 text-sm md:text-base font-bold whitespace-nowrap text-amber-600 dark:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none" data-target="persona">👤 Persona (Testes)</button>
+                <button class="tab-btn flex-1 py-5 px-4 md:px-6 text-sm md:text-base font-bold whitespace-nowrap text-amber-600 dark:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none" data-target="persona">👤 Persona Fictícia</button>
             </nav>
 
             <div class="p-6 md:p-10 space-y-8">
@@ -122,51 +136,100 @@
                         </button>
                     </div>
 
-                    <!-- Detailed Persona Card -->
-                    <div id="personaCardContainer" class="hidden w-full max-w-3xl flex-col bg-white dark:bg-slate-800 border-2 border-amber-200 dark:border-amber-900/50 rounded-2xl shadow-md overflow-hidden relative mt-2">
+                    <!-- Detailed Persona Card (Fake Name Generator Style) -->
+                    <div id="personaCardContainer" class="hidden w-full flex-col bg-white dark:bg-slate-800 border-2 border-amber-200 dark:border-amber-900/50 rounded-2xl shadow-xl overflow-hidden relative mt-2">
                         <!-- Warning Banner -->
                         <div class="bg-amber-500 text-white text-xs md:text-sm font-bold text-center py-2 px-4 uppercase tracking-wider flex items-center justify-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
-                            DADOS 100% FICTÍCIOS GERADOS PARA TESTES. SEM VALOR LEGAL.
+                            DADOS GERADOS ALEATORIAMENTE. SEM VALIDADE LEGAL.
                         </div>
                         
                         <div class="p-6 md:p-8 relative">
-                            <!-- Copy Button Absolute -->
-                            <button id="copyPersonaBtn" class="absolute top-4 right-4 p-3 bg-slate-100 dark:bg-slate-700 rounded-full shadow hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-blue-900 dark:hover:text-blue-400 transition-all text-slate-500 dark:text-slate-300 focus:outline-none group" title="Copiar todos os dados">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                            <!-- Copy Button -->
+                            <button id="copyPersonaBtn" class="absolute top-6 right-6 p-3 bg-blue-100 dark:bg-blue-900/40 rounded-full shadow hover:bg-blue-200 hover:scale-105 transition-all text-blue-600 dark:text-blue-400 focus:outline-none group z-10" title="Copiar Ficha Completa">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
                             </button>
 
                             <!-- Profile Header -->
-                            <div class="flex items-center gap-4 mb-6 border-b border-slate-100 dark:border-slate-700 pb-6">
-                                <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-slate-700 dark:to-slate-600 rounded-full flex items-center justify-center text-2xl font-bold text-blue-700 dark:text-blue-300" id="personaInitial">A</div>
-                                <div>
-                                    <h3 class="text-2xl font-black text-slate-900 dark:text-white" id="personaName">Nome Completo</h3>
-                                    <p class="text-slate-500 dark:text-slate-400 font-medium" id="personaProf">Profissão</p>
+                            <div class="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8 border-b border-slate-100 dark:border-slate-700 pb-8">
+                                <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-teal-400 rounded-full flex items-center justify-center text-4xl font-black text-white shadow-lg flex-shrink-0" id="personaInitial">A</div>
+                                <div class="text-center md:text-left flex-1">
+                                    <h3 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-2" id="personaName">Nome Completo</h3>
+                                    <p class="text-slate-500 dark:text-slate-400 font-medium text-lg mb-1 flex items-center justify-center md:justify-start gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                        <span id="personaProf">Profissão</span>
+                                    </p>
+                                    <p class="text-slate-600 dark:text-slate-300 text-sm flex items-center justify-center md:justify-start gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                        <span id="personaAddressTop">Endereço Principal</span>
+                                    </p>
                                 </div>
                             </div>
                             
-                            <!-- Profile Data Grid -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-sm md:text-base">
-                                <div class="space-y-1">
-                                    <span class="text-slate-400 dark:text-slate-500 font-bold uppercase text-xs tracking-wider">CPF (Válido para testes)</span>
-                                    <p class="font-mono text-slate-800 dark:text-slate-200 font-semibold text-lg" id="personaCpf">000.000.000-00</p>
+                            <!-- Detailed Data Grids -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                
+                                <!-- Seção: Pessoais -->
+                                <div class="persona-section space-y-4">
+                                    <h4 class="text-base font-bold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 pb-2 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
+                                        Dados Pessoais
+                                    </h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div><span class="persona-label">CPF (Válido para máscara)</span><span class="persona-value mono text-blue-600 dark:text-blue-400" id="personaCpf"></span></div>
+                                        <div><span class="persona-label">RG (Fictício)</span><span class="persona-value mono" id="personaRg"></span></div>
+                                        <div><span class="persona-label">Data de Nascimento</span><span class="persona-value" id="personaBirth"></span></div>
+                                        <div><span class="persona-label">Idade</span><span class="persona-value" id="personaAgeVal"></span></div>
+                                        <div class="col-span-2"><span class="persona-label">Nome da Mãe</span><span class="persona-value" id="personaMother"></span></div>
+                                        <div class="col-span-2"><span class="persona-label">Certidão de Nasc. (Fictícia)</span><span class="persona-value text-sm" id="personaCert"></span></div>
+                                    </div>
                                 </div>
-                                <div class="space-y-1">
-                                    <span class="text-slate-400 dark:text-slate-500 font-bold uppercase text-xs tracking-wider">RG Fictício</span>
-                                    <p class="font-mono text-slate-800 dark:text-slate-200 font-semibold text-lg" id="personaRg">00.000.000-0</p>
+
+                                <!-- Seção: Contato & Online -->
+                                <div class="persona-section space-y-4">
+                                    <h4 class="text-base font-bold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 pb-2 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-teal-500" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" /><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" /></svg>
+                                        Contato & Acesso
+                                    </h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="col-span-2"><span class="persona-label">Telefone Celular</span><span class="persona-value mono" id="personaPhone"></span></div>
+                                        <div class="col-span-2"><span class="persona-label">E-mail Pessoal</span><span class="persona-value text-blue-500" id="personaEmail"></span></div>
+                                        <div><span class="persona-label">Username</span><span class="persona-value font-mono text-sm" id="personaUser"></span></div>
+                                        <div><span class="persona-label">Senha Gerada</span><span class="persona-value font-mono text-sm" id="personaPass"></span></div>
+                                    </div>
                                 </div>
-                                <div class="space-y-1">
-                                    <span class="text-slate-400 dark:text-slate-500 font-bold uppercase text-xs tracking-wider">Data de Nascimento</span>
-                                    <p class="text-slate-800 dark:text-slate-200 font-medium" id="personaBirth">DD/MM/AAAA</p>
+
+                                <!-- Seção: Financeiro -->
+                                <div class="persona-section space-y-4">
+                                    <h4 class="text-base font-bold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 pb-2 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" /><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" /></svg>
+                                        Financeiro (Cartão Fake)
+                                    </h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="col-span-2"><span class="persona-label">Cartão de Crédito Fictício</span><span class="persona-value mono" id="personaCard"></span></div>
+                                        <div><span class="persona-label">Validade</span><span class="persona-value mono" id="personaCardExp"></span></div>
+                                        <div><span class="persona-label">CVV</span><span class="persona-value mono" id="personaCardCvv"></span></div>
+                                        <div class="col-span-2 mt-2"><span class="persona-label">Empresa</span><span class="persona-value" id="personaCompany"></span></div>
+                                        <div><span class="persona-label">Renda Mensal Est.</span><span class="persona-value text-emerald-600 dark:text-emerald-400 font-bold" id="personaSalary"></span></div>
+                                    </div>
                                 </div>
-                                <div class="space-y-1">
-                                    <span class="text-slate-400 dark:text-slate-500 font-bold uppercase text-xs tracking-wider">Certidão de Nasc. (Fictícia)</span>
-                                    <p class="text-slate-800 dark:text-slate-200 font-medium text-sm" id="personaCert">Livro A-XX, Fls XX, Termo XXX</p>
+
+                                <!-- Seção: Físico & Outros -->
+                                <div class="persona-section space-y-4">
+                                    <h4 class="text-base font-bold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 pb-2 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" /></svg>
+                                        Físico & Misc
+                                    </h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div><span class="persona-label">Altura</span><span class="persona-value" id="personaHeight"></span></div>
+                                        <div><span class="persona-label">Peso</span><span class="persona-value" id="personaWeight"></span></div>
+                                        <div><span class="persona-label">Tipo Sanguíneo</span><span class="persona-value text-red-500 font-bold" id="personaBlood"></span></div>
+                                        <div><span class="persona-label">Signo</span><span class="persona-value" id="personaZodiac"></span></div>
+                                        <div><span class="persona-label">Cor Favorita</span><span class="persona-value" id="personaColor"></span></div>
+                                        <div><span class="persona-label">Veículo (Placa Fake)</span><span class="persona-value mono" id="personaPlate"></span></div>
+                                    </div>
                                 </div>
-                                <div class="space-y-1 md:col-span-2 mt-2">
-                                    <span class="text-slate-400 dark:text-slate-500 font-bold uppercase text-xs tracking-wider">Endereço Residencial (Fictício)</span>
-                                    <p class="text-slate-800 dark:text-slate-200 font-medium" id="personaAddress">Rua Falsa, 123 - Bairro - Cidade / UF - 00000-000</p>
-                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -200,7 +263,7 @@
                         O nome é a primeira impressão, seja para um bebê, empresa ou personagem. Porém, para desenvolvedores e analistas de qualidade (QA), gerar <strong>Personas Fakes</strong> e <strong>CPFs válidos matematicamente</strong> é essencial para testar cadastros, fluxos de pagamento e sistemas internos sem ferir a LGPD ou comprometer dados reais.
                     </p>
                     <p class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm mt-4">
-                        Nosso <strong>Gerador de Nomes e Personas Avançado</strong> atende todas as frentes: criatividade para o seu dia a dia e eficiência técnica (com dados simulados consistentes) para validar seu software. Importante: <em>Nenhum dado de Persona possui valor legal ou corresponde a um indivíduo real.</em>
+                        Nosso <strong>Gerador de Nomes e Personas Avançado</strong> atende todas as frentes: criatividade para o seu dia a dia e eficiência técnica (com dados simulados completos ao estilo Fake Name Generator) para validar seu software. Importante: <em>Nenhum dado de Persona possui valor legal ou corresponde a um indivíduo real.</em>
                     </p>
                 </article>
                 
@@ -251,7 +314,7 @@
             baby: {
                 gender: {
                     masculino: {
-                        classic: ["João", "Pedro", "Miguel", "Arthur", "Heitor", "Bernardo", "Davi", "Gabriel", "Lucas", "Matheus", "Rafael", "Guilherme", "Gustavo", "Felipe", "Daniel", "Antônio", "Carlos", "Eduardo", "Francisco", "Marcos"],
+                        classic: ["João", "Pedro", "Miguel", "Arthur", "Heitor", "Bernardo", "Davi", "Gabriel", "Lucas", "Matheus", "Rafael", "Guilherme", "Gustavo", "Felipe", "Daniel", "Antônio", "Carlos", "Eduardo", "Francisco", "Marcos", "Ricardo", "Roberto", "Sérgio"],
                         modern: ["Enzo", "Theo", "Gael", "Ravi", "Noah", "Levi", "Cauã", "Rael", "Zion", "Lucca", "Kalel", "Yan", "Otto", "Luan", "Cauê", "Thales", "Yuri", "Breno", "Kauan", "Henry"],
                         international: ["James", "William", "Oliver", "Benjamin", "Elijah", "Lucas", "Mason", "Logan", "Alexander", "Ethan", "Jacob", "Michael", "Daniel", "Henry", "Jackson", "Sebastian", "Aiden", "Matthew", "Samuel", "David"]
                     },
@@ -266,7 +329,7 @@
                         international: ["Charlie", "Robin", "Jamie", "Harper", "Rowan", "Finley", "River", "Emerson", "Hayden", "Dakota", "Phoenix", "Justice", "Milan", "Armani", "Lennon"]
                     }
                 },
-                surnames: ["Silva", "Santos", "Oliveira", "Souza", "Rodrigues", "Ferreira", "Alves", "Pereira", "Lima", "Gomes", "Costa", "Ribeiro", "Martins", "Carvalho", "Almeida", "Lopes", "Soares", "Fernandes", "Vieira", "Barbosa", "Melo", "Barros", "Cardoso", "Rocha", "Dias", "Mendes", "Nunes"]
+                surnames: ["Silva", "Santos", "Oliveira", "Souza", "Rodrigues", "Ferreira", "Alves", "Pereira", "Lima", "Gomes", "Costa", "Ribeiro", "Martins", "Carvalho", "Almeida", "Lopes", "Soares", "Fernandes", "Vieira", "Barbosa", "Melo", "Barros", "Cardoso", "Rocha", "Dias", "Mendes", "Nunes", "Correia", "Castro", "Cunha"]
             },
             company: {
                 tech: {
@@ -304,12 +367,16 @@
                 }
             },
             persona: {
-                professions: ["Analista de Sistemas", "Desenvolvedor(a) Front-end", "Engenheiro(a) de Software", "Designer Gráfico", "Gerente de Projetos", "Analista de Marketing", "Contador(a)", "Advogado(a)", "Médico(a) Clínico", "Enfermeiro(a)", "Arquiteto(a)", "Engenheiro(a) Civil", "Professor(a)", "Fotógrafo(a)", "Cozinheiro(a) / Chef", "Jornalista", "Psicólogo(a)", "Consultor(a) Financeiro", "Administrador(a)", "Eletricista"],
+                professions: ["Analista de Sistemas", "Desenvolvedor(a) Front-end", "Engenheiro(a) de Software", "Designer Gráfico", "Gerente de Projetos", "Analista de Marketing", "Contador(a)", "Advogado(a)", "Médico(a) Clínico", "Enfermeiro(a)", "Arquiteto(a)", "Engenheiro(a) Civil", "Professor(a)", "Fotógrafo(a)", "Chef de Cozinha", "Jornalista", "Psicólogo(a)", "Consultor(a) Financeiro", "Administrador(a)", "Eletricista", "Motorista de App", "Analista de Dados", "Cientista de Dados", "Veterinário(a)", "Farmacêutico(a)"],
                 address: {
-                    prefix: ["Rua", "Avenida", "Praça", "Alameda", "Travessa"],
-                    names: ["das Flores", "dos Ipês", "das Acácias", "das Palmeiras", "Central", "Principal", "do Sol", "da Lua", "Castelo Branco", "Tiradentes", "Sete de Setembro", "Getúlio Vargas", "Santo Antônio", "São José", "da Paz", "da Esperança", "do Comércio", "Bandeirantes", "São Paulo", "Brasil"],
-                    cities: ["São Paulo/SP", "Rio de Janeiro/RJ", "Belo Horizonte/MG", "Curitiba/PR", "Porto Alegre/RS", "Salvador/BA", "Fortaleza/CE", "Recife/PE", "Brasília/DF", "Goiânia/GO", "Manaus/AM", "Belém/PA", "Florianópolis/SC", "Vitória/ES", "Natal/RN", "Campinas/SP", "Ribeirão Preto/SP", "Uberlândia/MG", "Londrina/PR", "João Pessoa/PB"]
-                }
+                    prefix: ["Rua", "Avenida", "Praça", "Alameda", "Travessa", "Rodovia"],
+                    names: ["das Flores", "dos Ipês", "das Acácias", "das Palmeiras", "Central", "Principal", "do Sol", "da Lua", "Castelo Branco", "Tiradentes", "Sete de Setembro", "Getúlio Vargas", "Santo Antônio", "São José", "da Paz", "da Esperança", "do Comércio", "Bandeirantes", "São Paulo", "Brasil", "Quinze de Novembro", "Rui Barbosa", "Machado de Assis"],
+                    cities: ["São Paulo/SP", "Rio de Janeiro/RJ", "Belo Horizonte/MG", "Curitiba/PR", "Porto Alegre/RS", "Salvador/BA", "Fortaleza/CE", "Recife/PE", "Brasília/DF", "Goiânia/GO", "Manaus/AM", "Belém/PA", "Florianópolis/SC", "Vitória/ES", "Natal/RN", "Campinas/SP", "Ribeirão Preto/SP", "Uberlândia/MG", "Londrina/PR", "João Pessoa/PB", "Maceió/AL", "Aracaju/SE", "Cuiabá/MT", "Campo Grande/MS"]
+                },
+                emails: ["@gmail.com", "@yahoo.com.br", "@hotmail.com", "@outlook.com", "@live.com", "@uol.com.br", "@bol.com.br"],
+                bloodTypes: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+                zodiacs: ["Áries", "Touro", "Gêmeos", "Câncer", "Leão", "Virgem", "Libra", "Escorpião", "Sagitário", "Capricórnio", "Aquário", "Peixes"],
+                colors: ["Azul", "Vermelho", "Verde", "Preto", "Branco", "Amarelo", "Roxo", "Laranja", "Cinza", "Rosa", "Marrom"]
             }
         };
 
@@ -384,7 +451,7 @@
                     <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Gênero da Persona</label>
                     <div class="relative">
                         <select id="personaGender" class="${selectClass}">
-                            <option value="random">Masculino ou Feminino (Aleatório)</option>
+                            <option value="random">Aleatório (Qualquer)</option>
                             <option value="masculino">Masculino</option>
                             <option value="feminino">Feminino</option>
                         </select>
@@ -392,7 +459,7 @@
                     </div>
                 </div>
                 <div class="space-y-3">
-                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Idade Fictícia</label>
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Faixa Etária</label>
                     <div class="relative">
                         <select id="personaAge" class="${selectClass}">
                             <option value="adult">Adulto (25 a 50 anos)</option>
@@ -413,6 +480,9 @@
         // Core Functions
         const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
         const getRndNum = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+        
+        // Remove accents for username/email
+        const removeAccents = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
         // Persona Generators
         function generateValidCPF() {
@@ -437,21 +507,30 @@
             return `${getRndNum(10,99)}.${getRndNum(100,999)}.${getRndNum(100,999)}-${getRndNum(0,9)}`;
         }
 
-        function generateBirthDate(ageGroup) {
+        function generateBirthDateAndAge(ageGroup) {
             let minAge, maxAge;
             if(ageGroup === 'young') { minAge = 18; maxAge = 24; }
             else if(ageGroup === 'senior') { minAge = 50; maxAge = 80; }
-            else { minAge = 25; maxAge = 49; } // adult
+            else { minAge = 25; maxAge = 49; }
 
             const age = getRndNum(minAge, maxAge);
             const currentYear = new Date().getFullYear();
             const year = currentYear - age;
-            const month = getRndNum(1, 12).toString().padStart(2, '0');
+            const monthNum = getRndNum(1, 12);
+            const month = monthNum.toString().padStart(2, '0');
             
             let daysInMonth = new Date(year, month, 0).getDate();
             const day = getRndNum(1, daysInMonth).toString().padStart(2, '0');
             
-            return `${day}/${month}/${year}`;
+            // Assign Zodiac based on month (approximate)
+            const zodiacs = data.persona.zodiacs;
+            const zodiac = zodiacs[monthNum - 1]; // Roughly
+            
+            return {
+                date: `${day}/${month}/${year}`,
+                age: age,
+                zodiac: zodiac
+            };
         }
 
         function generateFakeAddress() {
@@ -468,6 +547,75 @@
 
         function generateFakeCert() {
             return `Livro A-${getRndNum(10,99)}, Fls ${getRndNum(100,999)}, Termo ${getRndNum(1000,9999)}`;
+        }
+
+        function generatePhone() {
+            const ddd = getRndNum(11, 99);
+            const p1 = getRndNum(1000, 9999);
+            const p2 = getRndNum(1000, 9999);
+            return `(${ddd}) 9${p1}-${p2}`;
+        }
+
+        function generateCreditCard() {
+            // 4 is Visa, 5 is Mastercard
+            const isVisa = Math.random() > 0.5;
+            const flag = isVisa ? "Visa" : "Mastercard";
+            const start = isVisa ? "4" : "5";
+            
+            const n1 = start + getRndNum(100, 999).toString();
+            const n2 = getRndNum(1000, 9999).toString();
+            const n3 = getRndNum(1000, 9999).toString();
+            const n4 = getRndNum(1000, 9999).toString();
+            
+            const month = getRndNum(1, 12).toString().padStart(2, '0');
+            const year = (new Date().getFullYear() + getRndNum(1, 5)).toString().substring(2);
+            
+            return {
+                flag: flag,
+                number: `${n1} ${n2} ${n3} ${n4}`,
+                exp: `${month}/${year}`,
+                cvv: getRndNum(100, 999).toString()
+            };
+        }
+
+        function generateCompany() {
+            const techPrefix = getRandom(data.company.tech.prefix);
+            const techSuffix = getRandom(data.company.tech.suffix);
+            const useTech = Math.random() > 0.5;
+            
+            if(useTech) return `${techPrefix}${techSuffix.toLowerCase()} Ltda`;
+            
+            const finPrefix = getRandom(data.company.finance.prefix);
+            const finSuffix = getRandom(data.company.finance.suffix);
+            return `${finPrefix} ${finSuffix} S.A.`;
+        }
+
+        function generatePhysical(gender) {
+            let hMin = gender === 'masculino' ? 165 : 155;
+            let hMax = gender === 'masculino' ? 190 : 175;
+            const height = getRndNum(hMin, hMax) / 100;
+            
+            // IMC approx 19 to 28
+            const imc = getRndNum(190, 280) / 10;
+            const weight = (imc * (height * height)).toFixed(1);
+            
+            return {
+                height: height.toFixed(2) + 'm',
+                weight: weight + 'kg',
+                blood: getRandom(data.persona.bloodTypes)
+            };
+        }
+
+        function generateLicensePlate() {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const l1 = letters.charAt(Math.floor(Math.random() * letters.length));
+            const l2 = letters.charAt(Math.floor(Math.random() * letters.length));
+            const l3 = letters.charAt(Math.floor(Math.random() * letters.length));
+            const n1 = getRndNum(0, 9);
+            const l4 = letters.charAt(Math.floor(Math.random() * letters.length)); // Mercosul format
+            const n2 = getRndNum(0, 9);
+            const n3 = getRndNum(0, 9);
+            return `${l1}${l2}${l3}${n1}${l4}${n2}${n3}`; // ABC1D23
         }
 
         // Main Generator Controller
@@ -508,29 +656,60 @@
                 showBasicResult(resultName);
             }
             else if (currentCategory === 'persona') {
-                let gender = document.getElementById('personaGender').value;
+                let reqGender = document.getElementById('personaGender').value;
                 const ageGroup = document.getElementById('personaAge').value;
                 
-                if (gender === 'random') {
-                    gender = Math.random() > 0.5 ? 'masculino' : 'feminino';
-                }
+                const gender = reqGender === 'random' ? (Math.random() > 0.5 ? 'masculino' : 'feminino') : reqGender;
 
-                // Choose a generic "modern" name for persona
+                // Name Generation
                 const firstName = getRandom(data.baby.gender[gender].modern);
                 const lastName1 = getRandom(data.baby.surnames);
-                const lastName2 = getRandom(data.baby.surnames);
+                let lastName2 = getRandom(data.baby.surnames);
+                while(lastName1 === lastName2) lastName2 = getRandom(data.baby.surnames);
+                resultName = `${firstName} ${lastName1} ${lastName2}`;
                 
-                // If they are the same, just use one
-                resultName = (lastName1 !== lastName2) ? `${firstName} ${lastName1} ${lastName2}` : `${firstName} ${lastName1}`;
-                
+                // Mother Name
+                const momFirst = getRandom(data.baby.gender.feminino.classic);
+                const momName = `${momFirst} ${lastName1}`;
+
+                // Account info
+                const cleanFirst = removeAccents(firstName).toLowerCase();
+                const cleanLast = removeAccents(lastName2).toLowerCase();
+                const username = `${cleanFirst}.${cleanLast}${getRndNum(10, 999)}`;
+                const email = `${username}${getRandom(data.persona.emails)}`;
+                const password = `${cleanFirst.charAt(0).toUpperCase()}${cleanLast}@${getRndNum(1000,9999)}`;
+
+                // Complex Data objects
+                const birthData = generateBirthDateAndAge(ageGroup);
+                const physicalData = generatePhysical(gender);
+                const cardData = generateCreditCard();
+
                 const persona = {
                     name: resultName,
+                    mother: momName,
                     cpf: generateValidCPF(),
                     rg: generateFakeRG(),
-                    birth: generateBirthDate(ageGroup),
+                    birth: birthData.date,
+                    age: birthData.age + ' anos',
+                    zodiac: birthData.zodiac,
                     cert: generateFakeCert(),
                     profession: getRandom(data.persona.professions),
-                    address: generateFakeAddress()
+                    address: generateFakeAddress(),
+                    phone: generatePhone(),
+                    email: email,
+                    user: username,
+                    pass: password,
+                    cardFlag: cardData.flag,
+                    cardNumber: cardData.number,
+                    cardExp: cardData.exp,
+                    cardCvv: cardData.cvv,
+                    company: generateCompany(),
+                    salary: `R$ ${getRndNum(2, 15)}.${getRndNum(100, 999)},00`,
+                    height: physicalData.height,
+                    weight: physicalData.weight,
+                    blood: physicalData.blood,
+                    color: getRandom(data.persona.colors),
+                    plate: generateLicensePlate()
                 };
                 
                 showPersonaResult(persona);
@@ -562,14 +741,65 @@
             document.getElementById('personaInitial').textContent = p.name.charAt(0).toUpperCase();
             document.getElementById('personaName').textContent = p.name;
             document.getElementById('personaProf').textContent = p.profession;
+            document.getElementById('personaAddressTop').textContent = p.address;
+            
             document.getElementById('personaCpf').textContent = p.cpf;
             document.getElementById('personaRg').textContent = p.rg;
             document.getElementById('personaBirth').textContent = p.birth;
+            document.getElementById('personaAgeVal').textContent = p.age;
+            document.getElementById('personaMother').textContent = p.mother;
             document.getElementById('personaCert').textContent = p.cert;
-            document.getElementById('personaAddress').textContent = p.address;
+
+            document.getElementById('personaPhone').textContent = p.phone;
+            document.getElementById('personaEmail').textContent = p.email;
+            document.getElementById('personaUser').textContent = p.user;
+            document.getElementById('personaPass').textContent = p.pass;
+
+            document.getElementById('personaCard').textContent = `${p.cardFlag} ${p.cardNumber}`;
+            document.getElementById('personaCardExp').textContent = p.cardExp;
+            document.getElementById('personaCardCvv').textContent = p.cardCvv;
+            document.getElementById('personaCompany').textContent = p.company;
+            document.getElementById('personaSalary').textContent = p.salary;
+
+            document.getElementById('personaHeight').textContent = p.height;
+            document.getElementById('personaWeight').textContent = p.weight;
+            document.getElementById('personaBlood').textContent = p.blood;
+            document.getElementById('personaZodiac').textContent = p.zodiac;
+            document.getElementById('personaColor').textContent = p.color;
+            document.getElementById('personaPlate').textContent = p.plate;
             
             // Format raw text for clipboard
-            const rawText = `NOME: ${p.name}\nCPF: ${p.cpf}\nRG: ${p.rg}\nDATA DE NASC: ${p.birth}\nPROFISSÃO: ${p.profession}\nENDEREÇO: ${p.address}\n\n*Dados fictícios*`;
+            const rawText = `[ DADOS PESSOAIS ]
+Nome: ${p.name}
+Mãe: ${p.mother}
+CPF: ${p.cpf}
+RG: ${p.rg}
+Data de Nasc: ${p.birth} (${p.age})
+Certidão: ${p.cert}
+
+[ CONTATO & ONLINE ]
+Endereço: ${p.address}
+Celular: ${p.phone}
+E-mail: ${p.email}
+Usuário: ${p.user}
+Senha: ${p.pass}
+
+[ FINANCEIRO & PROFISSIONAL ]
+Profissão: ${p.profession}
+Empresa: ${p.company}
+Renda: ${p.salary}
+Cartão: ${p.cardFlag} ${p.cardNumber}
+Validade: ${p.cardExp} | CVV: ${p.cardCvv}
+
+[ CARACTERÍSTICAS FÍSICAS & MISC ]
+Altura: ${p.height} | Peso: ${p.weight}
+Tipo Sanguíneo: ${p.blood}
+Signo: ${p.zodiac}
+Cor Favorita: ${p.color}
+Placa de Veículo: ${p.plate}
+
+*Gerado via Nomatize (Dados 100% Fictícios)*`;
+
             lastGeneratedPersona = rawText;
 
             container.classList.remove('hidden');
@@ -621,7 +851,7 @@
             const item = historyList[index];
             if (item) {
                 // If it's a long persona text, show specific message
-                const msg = item.raw.includes('CPF:') ? "Dados da Persona Copiados!" : "Nome Copiado!";
+                const msg = item.raw.includes('CPF:') ? "Ficha da Persona Copiada!" : "Nome Copiado!";
                 window.copyText(item.raw, msg);
             }
         }
@@ -674,7 +904,7 @@
 
             document.getElementById('copyPersonaBtn').addEventListener('click', () => {
                 if (lastGeneratedPersona) {
-                    window.copyText(lastGeneratedPersona, "Dados da Persona Copiados!");
+                    window.copyText(lastGeneratedPersona, "Ficha da Persona Copiada!");
                 }
             });
 
