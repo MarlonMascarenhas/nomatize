@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Nomes e Personas Avançado | MMC Codes</title>
+    <meta name="description" content="Gerador de Nomes Avançado: crie nomes criativos e únicos para bebês, empresas, startups e personagens de RPG. Ferramenta gratuita e inteligente.">
+    <meta name="keywords" content="gerador de nomes, nomes de bebês, nomes para empresas, nomes para rpg, criador de personas, nomes criativos">
+    <meta name="author" content="MMC Codes">
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#10b981',
+                        dark: '#0f172a',
+                        darker: '#020617',
+                        light: '#f8fafc',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        .tab-btn { position: relative; }
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background-color: #3b82f6;
+            transition: width 0.3s ease;
+            border-radius: 3px 3px 0 0;
+        }
+        .tab-btn.active::after { width: 100%; }
+        .dark .tab-btn::after { background-color: #60a5fa; }
+        
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-darker dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col selection:bg-blue-200 selection:text-blue-900 dark:selection:bg-blue-900 dark:selection:text-blue-100">
+
+    <header class="bg-white/80 dark:bg-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 p-4 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-300">
+                Nomatize
+            </h1>
+            <button id="themeToggle" class="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Alternar Tema">
+                <!-- Icon injected by JS -->
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl mx-auto w-full p-4 md:p-8 flex flex-col gap-10">
+        
+        <!-- Header Text (SEO & Context) -->
+        <section class="text-center space-y-5 fade-in mt-4 md:mt-8">
+            <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+                O Nome Perfeito <br class="hidden md:block"/> Espera Por Você
+            </h2>
+            <p class="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">
+                Gere nomes criativos e únicos para bebês, novos negócios ou personagens de RPG com nossa inteligência em combinações.
+            </p>
+        </section>
+
+        <!-- Main Interface Card -->
+        <section class="bg-white dark:bg-dark rounded-3xl shadow-2xl shadow-blue-900/5 dark:shadow-black/50 border border-slate-200 dark:border-slate-800 overflow-hidden fade-in relative z-10" style="animation-delay: 0.1s;">
+            
+            <!-- Tabs -->
+            <nav class="flex overflow-x-auto border-b border-slate-200 dark:border-slate-800 scrollbar-hide bg-slate-50 dark:bg-slate-900/50">
+                <button class="tab-btn active flex-1 py-5 px-6 text-sm md:text-base font-bold whitespace-nowrap text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none" data-target="baby">👶 Bebês</button>
+                <button class="tab-btn flex-1 py-5 px-6 text-sm md:text-base font-bold whitespace-nowrap text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none" data-target="company">🏢 Empresas & Startups</button>
+                <button class="tab-btn flex-1 py-5 px-6 text-sm md:text-base font-bold whitespace-nowrap text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none" data-target="rpg">🐉 RPG & Personagens</button>
+            </nav>
+
+            <div class="p-6 md:p-10 space-y-8">
+                <!-- Filters Section -->
+                <div id="filters-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 transition-opacity duration-300">
+                    <!-- Dynamic filters injected here -->
+                </div>
+
+                <!-- Generate Action -->
+                <button id="generateBtn" class="w-full py-5 bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white rounded-2xl font-black text-xl shadow-xl shadow-blue-500/20 transform transition-all hover:-translate-y-1 active:translate-y-0 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-500/50">
+                    Gerar Nome Agora
+                </button>
+
+                <!-- Result Display Section -->
+                <div id="resultBox" class="hidden flex-col items-center justify-center p-8 md:p-12 bg-slate-50 dark:bg-slate-900/80 rounded-2xl border border-slate-200 dark:border-slate-800 mt-8 relative group">
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-[0.2em] font-bold">Resultado Encontrado</p>
+                    <div class="flex flex-col md:flex-row items-center gap-4 md:gap-6 w-full justify-center">
+                        <h3 id="generatedName" class="text-4xl md:text-6xl font-black text-slate-900 dark:text-white text-center break-words tracking-tight max-w-full"></h3>
+                        <button id="copyBtn" class="mt-4 md:mt-0 p-4 bg-white dark:bg-slate-800 rounded-full shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all text-blue-600 dark:text-blue-400 border border-slate-100 dark:border-slate-700 focus:outline-none" title="Copiar Nome">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                        </button>
+                    </div>
+                    <div id="copyToast" class="absolute -top-12 bg-slate-900 dark:bg-teal-500 text-white font-semibold px-4 py-2 rounded-lg opacity-0 transition-all duration-300 shadow-lg pointer-events-none transform translate-y-2">Nome Copiado!</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- History Section -->
+        <section class="fade-in bg-white/50 dark:bg-dark/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-800" style="animation-delay: 0.2s;">
+            <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800 dark:text-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" /></svg>
+                Últimas Criações
+            </h3>
+            <div id="historyContainer" class="flex flex-wrap gap-3">
+                <p class="text-slate-500 dark:text-slate-400 text-sm italic">O histórico aparecerá aqui...</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SEO & Footer Section -->
+    <footer class="bg-white dark:bg-dark border-t border-slate-200 dark:border-slate-800 pt-16 pb-8 mt-16 relative z-10">
+        <div class="max-w-5xl mx-auto px-4 md:px-8 space-y-12">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+                <article class="prose prose-slate dark:prose-invert max-w-none">
+                    <h4 class="text-2xl font-black text-slate-900 dark:text-white mb-4">A Importância de um Bom Nome</h4>
+                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                        O nome é a primeira impressão. Seja para um bebê que carregará essa identidade pela vida, uma empresa que busca se destacar em um mercado competitivo, ou um personagem que precisa de profundidade e contexto em uma história. Um nome bem escolhido transmite personalidade, valores e facilita a memorização.
+                    </p>
+                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed mt-4">
+                        Nosso <strong>Gerador de Nomes Avançado</strong> utiliza combinações inteligentes e categorias específicas para entregar sugestões com alta sonoridade e significado. Não dependa apenas da sorte, utilize nossas ferramentas para encontrar a inspiração perfeita de forma rápida e gratuita.
+                    </p>
+                </article>
+                
+                <div class="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-6">Explore o Ecossistema MMC</h4>
+                    <ul class="space-y-4">
+                        <li>
+                            <a href="https://pomofoco.com.br" target="_blank" rel="noopener noreferrer" class="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl hover:shadow-md transition-all border border-slate-100 dark:border-slate-700">
+                                <div>
+                                    <span class="block font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-500 transition-colors">Pomofoco</span>
+                                    <span class="text-sm text-slate-500">Temporizador Pomodoro para foco extremo.</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 group-hover:text-blue-500 transition-colors transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://conversor.dev.br" target="_blank" rel="noopener noreferrer" class="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl hover:shadow-md transition-all border border-slate-100 dark:border-slate-700">
+                                <div>
+                                    <span class="block font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-500 transition-colors">Conversor Dev</span>
+                                    <span class="text-sm text-slate-500">Ferramentas úteis para desenvolvedores.</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 group-hover:text-blue-500 transition-colors transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://atualizaconta.com.br" target="_blank" rel="noopener noreferrer" class="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl hover:shadow-md transition-all border border-slate-100 dark:border-slate-700">
+                                <div>
+                                    <span class="block font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-500 transition-colors">Atualiza Conta</span>
+                                    <span class="text-sm text-slate-500">Gestão e atualização de contas simples.</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 group-hover:text-blue-500 transition-colors transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500 font-medium">
+                <p>&copy; 2026 Nomatize. Desenvolvido com ❤️ por <span class="font-bold text-slate-800 dark:text-slate-200">MMC Codes</span>.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-blue-500 transition-colors">Termos de Uso</a>
+                    <a href="#" class="hover:text-blue-500 transition-colors">Privacidade</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Data & Logic -->
+    <script>
+        // Data Sources
+        const data = {
+            baby: {
+                gender: {
+                    masculino: {
+                        classic: ["João", "Pedro", "Miguel", "Arthur", "Heitor", "Bernardo", "Davi", "Gabriel", "Lucas", "Matheus", "Rafael", "Guilherme", "Gustavo", "Felipe", "Daniel", "Antônio", "Carlos", "Eduardo", "Francisco", "Marcos"],
+                        modern: ["Enzo", "Theo", "Gael", "Ravi", "Noah", "Levi", "Cauã", "Rael", "Zion", "Lucca", "Kalel", "Yan", "Otto", "Luan", "Cauê", "Thales", "Yuri", "Breno", "Kauan", "Henry"],
+                        international: ["James", "William", "Oliver", "Benjamin", "Elijah", "Lucas", "Mason", "Logan", "Alexander", "Ethan", "Jacob", "Michael", "Daniel", "Henry", "Jackson", "Sebastian", "Aiden", "Matthew", "Samuel", "David"]
+                    },
+                    feminino: {
+                        classic: ["Maria", "Ana", "Julia", "Alice", "Sophia", "Laura", "Manuela", "Isabella", "Luiza", "Helena", "Valentina", "Giovanna", "Beatriz", "Mariana", "Gabriela", "Fernanda", "Letícia", "Amanda", "Camila", "Rafaela"],
+                        modern: ["Maya", "Luna", "Zoe", "Chloe", "Isis", "Ayla", "Mel", "Liz", "Maitê", "Aurora", "Bella", "Eloá", "Jade", "Lívia", "Mirella", "Pietra", "Yasmin", "Alícia", "Clara", "Íris"],
+                        international: ["Emma", "Olivia", "Ava", "Isabella", "Sophia", "Charlotte", "Mia", "Amelia", "Harper", "Evelyn", "Abigail", "Emily", "Elizabeth", "Mila", "Ella", "Avery", "Sofia", "Camila", "Aria", "Scarlett"]
+                    },
+                    unissex: {
+                        classic: ["Alex", "Ariel", "Duda", "Cris", "Dani", "Manu", "Rafa", "Gabi", "Gui", "Leo", "Val", "Fran", "Ju", "Sol", "Céu"],
+                        modern: ["Kim", "Jordan", "Taylor", "Casey", "Morgan", "Riley", "Avery", "Cameron", "Quinn", "Skyler", "Dakota", "Reese", "Rowan", "Sage", "Peyton"],
+                        international: ["Charlie", "Robin", "Jamie", "Harper", "Rowan", "Finley", "River", "Emerson", "Hayden", "Dakota", "Phoenix", "Justice", "Milan", "Armani", "Lennon"]
+                    }
+                },
+                surnames: ["Silva", "Santos", "Oliveira", "Souza", "Rodrigues", "Ferreira", "Alves", "Pereira", "Lima", "Gomes", "Costa", "Ribeiro", "Martins", "Carvalho", "Almeida", "Lopes", "Soares", "Fernandes", "Vieira", "Barbosa"]
+            },
+            company: {
+                tech: {
+                    prefix: ["Tech", "Inno", "Nova", "Data", "Cloud", "Sync", "Cyber", "Omni", "Meta", "Nexus", "Code", "Byte", "AI", "Logic", "Net", "Sys", "Web", "App", "Dev", "Soft", "Quant", "Virtu", "Aero", "Bio"],
+                    suffix: ["base", "flow", "ify", "ly", "onics", "ware", "hub", "works", "labs", "matrix", "sphere", "gen", "x", "ops", "it", "sync", "link", "net", "tech", "com", "cast", "grid", "node"]
+                },
+                fashion: {
+                    prefix: ["Bella", "Glam", "Luxe", "Aura", "Vogue", "Chic", "Elegance", "Style", "Trend", "Mode", "Pura", "Diva", "Nova", "Haute", "Silk", "Velvet", "Satin", "Pearl", "Jewel", "Crown", "Aesthet", "Chroma"],
+                    suffix: ["Boutique", "Studio", "Salon", "Atelier", "Concept", "Collection", "Wear", "Apparels", "Beauty", "Spa", "Care", "Looks", "Threads", "Stitches", "Wardrobe", "Closet", "Garments", "Style", "Fashion", "Design"]
+                },
+                food: {
+                    prefix: ["Sabor", "Gusto", "Delícia", "Chef", "Grill", "Fresh", "Doce", "Sal", "Aroma", "Nutri", "Veg", "Meat", "Bakes", "Brew", "Spice", "Herb", "Taste", "Food", "Bite", "Snack", "Palate", "Crave", "Feast"],
+                    suffix: ["Burger", "Pizza", "Sushi", "Bistro", "Cafe", "Restô", "Express", "Delivery", "Kitchen", "House", "Spot", "Bar", "Lounge", "Station", "Point", "Corner", "Hub", "Shack", "Truck", "Box", "Eats", "Dine"]
+                },
+                finance: {
+                    prefix: ["Alpha", "Prime", "Apex", "Summit", "Vertex", "Capital", "Trust", "Wealth", "Valor", "Equinox", "Nexus", "Core", "Global", "Pro", "Elite", "Secure", "Clear", "Smart", "True", "Next", "Aegis", "Fort", "Crest"],
+                    suffix: ["Consulting", "Partners", "Advisors", "Group", "Capital", "Holdings", "Ventures", "Solutions", "Strategies", "Management", "Finance", "Wealth", "Invest", "Trust", "Bank", "Credit", "Funds", "Assets", "Broker", "Associates"]
+                }
+            },
+            rpg: {
+                medieval: {
+                    male: ["Aragorn", "Legolas", "Gimli", "Gandalf", "Thorin", "Elrond", "Bofur", "Kili", "Fili", "Balin", "Dwalin", "Oin", "Gloin", "Ori", "Nori", "Dori", "Bifur", "Bombur", "Bard", "Thranduil", "Boromir", "Faramir"],
+                    female: ["Arwen", "Galadriel", "Eowyn", "Tauriel", "Luthien", "Melian", "Idril", "Nienor", "Finduilas", "Morwen", "Haleth", "Elwing", "Aredhel", "Celebrian", "Earwen", "Indis", "Nerdanel", "Varda", "Yavanna", "Nienna"],
+                    surname: ["the Brave", "Ironfist", "Oakenshield", "Swiftbow", "the Wise", "Shadowalker", "Lightbringer", "Dragonslayer", "the Strong", "the Swift", "Silverleaf", "Starlight", "Deepdelver", "Firebeard", "Stonehelm", "the Bold", "the Fair", "the Dark", "the White", "the Grey"]
+                },
+                cyberpunk: {
+                    male: ["Neo", "Jace", "Zane", "Kael", "Ryker", "Jax", "Dash", "Orion", "Nova", "Silas", "Finn", "Knox", "Kade", "Zephyr", "Jett", "Rex", "Nash", "Cruz", "Dax", "Kian"],
+                    female: ["Trinity", "Nova", "Lyra", "Kael", "Zoya", "Rya", "Nix", "Kira", "Jada", "Zara", "Quinn", "Skye", "Lexa", "Xena", "Rhea", "Veda", "Cleo", "Yara", "Ziva", "Kori"],
+                    surname: ["Null", "Void", "Glitch", "Hack", "Byte", "Cipher", "Neon", "Chrome", "Wire", "Mesh", "Grid", "Core", "Pulse", "Synth", "Flux", "Spark", "Drift", "Shift", "Zero", "Echo"]
+                },
+                horror: {
+                    male: ["Victor", "Alistair", "Dorian", "Silas", "Lucius", "Barnabas", "Gideon", "Edgar", "Arthur", "Edward", "William", "Charles", "Thomas", "Henry", "George", "James", "Richard", "Joseph", "John", "Robert"],
+                    female: ["Victoria", "Beatrice", "Eleanor", "Genevieve", "Ophelia", "Cordelia", "Evangeline", "Josephine", "Charlotte", "Clara", "Alice", "Florence", "Grace", "Lily", "Rose", "Mary", "Sarah", "Emma", "Margaret", "Anne"],
+                    surname: ["Blackwood", "Ravenscroft", "Bloodgood", "Nightshade", "Graves", "Vane", "Thorne", "Crane", "Hyde", "Jekyll", "Frankenstein", "Dracula", "Harker", "Van Helsing", "Seward", "Holmwood", "Morris", "Westenra", "Murray", "Renfield"]
+                }
+            }
+        };
+
+        // UI Configurations
+        const filterConfigs = {
+            baby: `
+                <div class="space-y-3">
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Gênero</label>
+                    <div class="relative">
+                        <select id="babyGender" class="appearance-none w-full p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-0 focus:border-blue-500 dark:focus:border-blue-400 outline-none transition-colors cursor-pointer font-medium">
+                            <option value="masculino">Masculino</option>
+                            <option value="feminino">Feminino</option>
+                            <option value="unissex">Unissex</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Estilo / Origem</label>
+                    <div class="relative">
+                        <select id="babyStyle" class="appearance-none w-full p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-0 focus:border-blue-500 dark:focus:border-blue-400 outline-none transition-colors cursor-pointer font-medium">
+                            <option value="classic">Clássico & Tradicional</option>
+                            <option value="modern">Moderno & Tendência</option>
+                            <option value="international">Internacional</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+            `,
+            company: `
+                <div class="space-y-3 md:col-span-2">
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Nicho de Atuação da Empresa</label>
+                    <div class="relative">
+                        <select id="companyNiche" class="appearance-none w-full p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-0 focus:border-blue-500 dark:focus:border-blue-400 outline-none transition-colors cursor-pointer font-medium">
+                            <option value="tech">Tecnologia, SaaS & Inovação</option>
+                            <option value="fashion">Moda, Beleza & Estética</option>
+                            <option value="food">Alimentação, Gastronomia & Bebidas</option>
+                            <option value="finance">Finanças, Consultoria & B2B</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+            `,
+            rpg: `
+                <div class="space-y-3">
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Cenário / Universo</label>
+                    <div class="relative">
+                        <select id="rpgStyle" class="appearance-none w-full p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-0 focus:border-blue-500 dark:focus:border-blue-400 outline-none transition-colors cursor-pointer font-medium">
+                            <option value="medieval">Fantasia Medieval (Elfos, Anões)</option>
+                            <option value="cyberpunk">Cyberpunk & Sci-Fi Futurista</option>
+                            <option value="horror">Terror Gótico & Vitoriano</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Gênero do Personagem</label>
+                    <div class="relative">
+                        <select id="rpgGender" class="appearance-none w-full p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-0 focus:border-blue-500 dark:focus:border-blue-400 outline-none transition-colors cursor-pointer font-medium">
+                            <option value="male">Masculino</option>
+                            <option value="female">Feminino</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+            `
+        };
+
+        // Application State
+        let currentCategory = 'baby';
+        let historyList = [];
+
+        // Core Functions
+        const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+        function generateName() {
+            let result = '';
+            
+            if (currentCategory === 'baby') {
+                const gender = document.getElementById('babyGender').value;
+                const style = document.getElementById('babyStyle').value;
+                const nameList = data.baby.gender[gender][style];
+                const surnameList = data.baby.surnames;
+                result = `${getRandom(nameList)} ${getRandom(surnameList)}`;
+            } 
+            else if (currentCategory === 'company') {
+                const niche = document.getElementById('companyNiche').value;
+                const prefix = getRandom(data.company[niche].prefix);
+                const suffix = getRandom(data.company[niche].suffix);
+                
+                if (niche === 'tech') {
+                    // Tech usually concatenates words
+                    result = `${prefix}${suffix.toLowerCase()}`;
+                } else {
+                    // Others use space
+                    result = `${prefix} ${suffix}`;
+                }
+            }
+            else if (currentCategory === 'rpg') {
+                const style = document.getElementById('rpgStyle').value;
+                const gender = document.getElementById('rpgGender').value;
+                const nameList = data.rpg[style][gender];
+                const surnameList = data.rpg[style].surname;
+                // RPG titles/surnames logic
+                const surname = getRandom(surnameList);
+                if(surname.startsWith('the')) {
+                    result = `${getRandom(nameList)} ${surname}`;
+                } else {
+                    result = `${getRandom(nameList)} ${surname}`;
+                }
+            }
+
+            showResult(result);
+        }
+
+        function showResult(name) {
+            const resBox = document.getElementById('resultBox');
+            const genName = document.getElementById('generatedName');
+            
+            resBox.classList.remove('hidden');
+            resBox.classList.remove('fade-in');
+            void resBox.offsetWidth; // Trigger DOM reflow to restart animation
+            resBox.classList.add('fade-in');
+            resBox.style.display = 'flex';
+            
+            genName.textContent = name;
+            addToHistory(name);
+        }
+
+        function addToHistory(name) {
+            if (historyList.includes(name)) return;
+            historyList.unshift(name);
+            if (historyList.length > 5) historyList.pop(); // Keep only last 5
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyContainer');
+            if (historyList.length === 0) {
+                container.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm italic">O histórico aparecerá aqui...</p>';
+                return;
+            }
+            
+            container.innerHTML = historyList.map(name => `
+                <button onclick="copyText('${name}', true)" class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-sm font-semibold text-slate-700 dark:text-slate-200 shadow-sm hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50 flex items-center gap-2 group">
+                    ${name}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 group-hover:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                </button>
+            `).join('');
+        }
+
+        // Available globally for inline onclick
+        window.copyText = function(text, isFromHistory = false) {
+            navigator.clipboard.writeText(text).then(() => {
+                if(!isFromHistory) {
+                    const toast = document.getElementById('copyToast');
+                    toast.style.opacity = '1';
+                    toast.style.transform = 'translateY(0)';
+                    setTimeout(() => {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateY(8px)';
+                    }, 2000);
+                } else {
+                    // Small visual feedback for history chips can be added here
+                    // Alert is an option, but a custom visual feedback is better.
+                    const toast = document.getElementById('copyToast');
+                    toast.textContent = "Copiado do Histórico!";
+                    toast.style.opacity = '1';
+                    toast.style.transform = 'translateY(0)';
+                    setTimeout(() => {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateY(8px)';
+                        setTimeout(() => toast.textContent = "Nome Copiado!", 300);
+                    }, 2000);
+                }
+            });
+        }
+
+        // Event Listeners setup
+        function initApp() {
+            // Tabs logic
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // Reset all tabs
+                    document.querySelectorAll('.tab-btn').forEach(b => {
+                        b.classList.remove('active', 'text-slate-900', 'dark:text-white');
+                        b.classList.add('text-slate-500', 'dark:text-slate-400');
+                    });
+                    
+                    // Activate clicked tab
+                    const targetBtn = e.currentTarget;
+                    targetBtn.classList.add('active');
+                    targetBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+                    targetBtn.classList.add('text-slate-900', 'dark:text-white');
+                    
+                    currentCategory = targetBtn.dataset.target;
+                    
+                    // Load specific filters
+                    const filtersContainer = document.getElementById('filters-container');
+                    filtersContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        filtersContainer.innerHTML = filterConfigs[currentCategory];
+                        filtersContainer.style.opacity = '1';
+                    }, 150);
+                    
+                    // Hide result box when changing category
+                    const resBox = document.getElementById('resultBox');
+                    resBox.style.display = 'none';
+                    resBox.classList.add('hidden');
+                });
+            });
+
+            // Action Buttons
+            document.getElementById('generateBtn').addEventListener('click', generateName);
+            document.getElementById('copyBtn').addEventListener('click', () => {
+                window.copyText(document.getElementById('generatedName').textContent);
+            });
+
+            // Theme Toggle Logic
+            const themeToggleBtn = document.getElementById('themeToggle');
+            const htmlElement = document.documentElement;
+            
+            const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
+            const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
+
+            function updateThemeIcon() {
+                themeToggleBtn.innerHTML = htmlElement.classList.contains('dark') ? sunIcon : moonIcon;
+            }
+
+            themeToggleBtn.addEventListener('click', () => {
+                htmlElement.classList.toggle('dark');
+                updateThemeIcon();
+            });
+
+            // Initialization
+            document.getElementById('filters-container').innerHTML = filterConfigs.baby;
+            updateThemeIcon();
+        }
+
+        // Boot
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
