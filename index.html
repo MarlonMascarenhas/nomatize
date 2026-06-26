@@ -1,965 +1,321 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Nomes, Personas e CPF (Testes) | MMC Codes</title>
-    <meta name="description" content="Gerador Avançado de Nomes e Personas Fake com CPF Válido, RG, Cartão de Crédito e Dados Completos para Testes de Software. Ferramenta gratuita.">
-    <meta name="keywords" content="gerador de nomes, gerador de cpf, gerador de cpf válido, criador de personas, gerador de dados fake, cartao de credito fake, fake name generator brasil">
-    <meta name="author" content="MMC Codes">
-    <!-- AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8109622672701567" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nomatize — Gerador Inteligente de Nomes | Bebês, Empresas & Personas</title>
+  <meta name="description" content="Gerador de nomes inteligente com algoritmo combinatório. Descubra nomes únicos para bebês com filtros por origem, letra e sílabas. Gere nomes para empresas, marcas e personas completas para testes. Grátis!">
+  <meta name="keywords" content="gerador de nomes, nomes para bebês, significado de nomes, gerador de nomes para empresas, gerador de marca, nomes em alta, teste de disponibilidade, persona fictícia">
+  <meta name="author" content="Nomatize">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://nomatize.com.br/">
 
-    <!-- Tailwind CSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: '#3b82f6',
-                        secondary: '#10b981',
-                        dark: '#0f172a',
-                        darker: '#020617',
-                        light: '#f8fafc',
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        
-        .tab-btn { position: relative; }
-        .tab-btn::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 3px;
-            background-color: #3b82f6;
-            transition: width 0.3s ease;
-            border-radius: 3px 3px 0 0;
-        }
-        .tab-btn.active::after { width: 100%; }
-        .dark .tab-btn::after { background-color: #60a5fa; }
-        
-        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  <!-- Open Graph -->
+  <meta property="og:title" content="Nomatize — O Nome Perfeito Espera Por Você">
+  <meta property="og:description" content="Gerador de nomes inteligente com algoritmo combinatório. Milhares de combinações únicas.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nomatize.com.br/">
+  <meta property="og:image" content="https://nomatize.com.br/og-image.png">
 
-        /* Estilo para as divisões da persona */
-        .persona-section {
-            @apply bg-slate-50 dark:bg-slate-900/50 p-5 rounded-xl border border-slate-100 dark:border-slate-800;
+  <!-- AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8109622672701567" crossorigin="anonymous"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+
+  <!-- Tailwind (apenas para classes utilitárias mínimas) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
         }
-        .persona-label {
-            @apply text-slate-400 dark:text-slate-500 font-bold uppercase text-[10px] tracking-wider mb-1 block;
-        }
-        .persona-value {
-            @apply text-slate-800 dark:text-slate-200 font-medium text-sm md:text-base;
-        }
-        .persona-value.mono {
-            @apply font-mono font-semibold;
-        }
-    </style>
+      }
+    }
+  </script>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-darker dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col selection:bg-blue-200 selection:text-blue-900 dark:selection:bg-blue-900 dark:selection:text-blue-100">
+<body>
 
-    <header class="bg-white/80 dark:bg-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 p-4 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl md:text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-300">
-                Nomatize
-            </h1>
-            <button id="themeToggle" class="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Alternar Tema">
-                <!-- Icon injected by JS -->
-            </button>
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="header-inner">
+      <h1 class="logo" onclick="showPage('home')">Nomatize</h1>
+      <nav class="nav nav-desktop">
+        <button class="nav-link active" data-page="home">Início</button>
+        <button class="nav-link" data-page="trending">Tendências</button>
+        <button class="nav-link" data-page="quiz">Quiz</button>
+        <button class="nav-link" data-page="checker">Disponibilidade</button>
+        <button class="nav-link" data-page="favorites">Favoritos</button>
+      </nav>
+      <div class="flex items-center gap-3">
+        <button onclick="showPage('favorites')" class="relative p-2 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all" title="Favoritos">
+          <svg class="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span id="favCount" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+        </button>
+        <button id="themeToggle" class="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all" aria-label="Alternar tema"></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MOBILE BOTTOM NAV ===== -->
+  <nav class="bottom-nav">
+    <button class="bottom-nav-btn active" data-page="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span>Início</span>
+    </button>
+    <button class="bottom-nav-btn" data-page="trending">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+      <span>Tendências</span>
+    </button>
+    <button class="bottom-nav-btn" data-page="quiz">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+      <span>Quiz</span>
+    </button>
+    <button class="bottom-nav-btn" data-page="checker">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <span>Disponibilidade</span>
+    </button>
+    <button class="bottom-nav-btn" data-page="favorites">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span>Favoritos</span>
+    </button>
+  </nav>
+
+  <!-- ===== MAIN ===== -->
+  <div class="container py-6 md:py-10" style="max-width: 1200px;">
+
+    <!-- ===== PAGE: HOME ===== -->
+    <div id="page-home" class="page-content space-y-8">
+
+      <!-- Hero -->
+      <section class="text-center fade-in">
+        <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+          O Nome Perfeito<br class="hidden md:block"> Espera Por Você
+        </h2>
+        <p class="text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mt-4 font-medium">
+          Milhares de combinações únicas. Algoritmo inteligente com sílabas de 10 origens linguísticas.
+        </p>
+
+        <!-- Search bar -->
+        <div class="max-w-xl mx-auto mt-6">
+          <div class="glow-border flex items-center bg-white dark:bg-slate-800 rounded-2xl overflow-hidden">
+            <svg class="w-5 h-5 ml-5 text-slate-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input id="globalSearch" type="text" placeholder="Digite um nome (ex: Arthur)..." class="w-full p-4 bg-transparent outline-none text-slate-900 dark:text-white placeholder-slate-400 font-medium">
+            <button onclick="searchName()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-4 transition-colors flex-shrink-0 text-sm">Buscar</button>
+          </div>
         </div>
-    </header>
 
-    <div class="flex-grow flex w-full max-w-[1600px] mx-auto justify-center">
-        <!-- Lateral Esquerda (AdSense) -->
-        <aside class="hidden xl:flex w-[200px] 2xl:w-[300px] flex-shrink-0 flex-col items-center pt-8 px-4">
-            <ins class="adsbygoogle"
-                 style="display:block; width:100%; height:600px;"
-                 data-ad-client="ca-pub-8109622672701567"
-                 data-ad-slot=""
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </aside>
+        <!-- Quick links -->
+        <div class="flex flex-wrap justify-center gap-2 mt-4">
+          <span class="text-xs text-slate-400 py-1">⚡ Rápido:</span>
+          <button onclick="quickSearch('Arthur')" class="quick-link text-xs px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 dark:text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all font-medium">Arthur</button>
+          <button onclick="quickSearch('Helena')" class="quick-link text-xs px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 dark:text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all font-medium">Helena</button>
+          <button onclick="quickSearch('Miguel')" class="quick-link text-xs px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 dark:text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all font-medium">Miguel</button>
+          <button onclick="quickSearch('Theo')" class="quick-link text-xs px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 dark:text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all font-medium">Theo</button>
+          <button onclick="showPage('quiz')" class="quick-link text-xs px-3 py-1.5 bg-purple-100 dark:bg-purple-900/20 rounded-full text-purple-600 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/40 transition-all font-medium">🎯 Fazer Quiz</button>
+        </div>
+      </section>
 
-        <main class="flex-1 max-w-5xl w-full p-4 md:p-8 flex flex-col gap-10">
-        
-        <!-- Header Text (SEO & Context) -->
-        <section class="text-center space-y-5 fade-in mt-4 md:mt-8">
-            <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
-                O Nome Perfeito <br class="hidden md:block"/> Espera Por Você
-            </h2>
-            <p class="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">
-                Gere nomes criativos ou perfis completos (Personas Fakes com CPF) para testes de software, negócios ou RPG.
+      <!-- Generator Card -->
+      <section class="card">
+        <nav class="flex overflow-x-auto border-b border-slate-200 dark:border-slate-800 scrollbar-hide bg-slate-50 dark:bg-slate-900/50">
+          <button class="tab-btn active" data-target="baby">👶 Bebês</button>
+          <button class="tab-btn" data-target="company">🏢 Empresas</button>
+          <button class="tab-btn" data-target="rpg">🐉 RPG</button>
+          <button class="tab-btn" data-target="persona" style="color:#d97706">👤 Persona</button>
+        </nav>
+
+        <div class="card-body space-y-6">
+          <div id="filters-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 transition-opacity duration-300"></div>
+
+          <button id="generateBtn" class="btn btn-primary w-full py-4 text-lg">
+            🚀 Gerar Agora
+          </button>
+
+          <!-- Result -->
+          <div id="resultBox" class="hidden flex-col items-center p-6 md:p-8 bg-slate-50 dark:bg-slate-900/80 rounded-2xl border border-slate-200 dark:border-slate-800 mt-4 relative">
+            <div id="basicResultContainer" class="w-full"></div>
+            <div id="personaCardContainer" class="hidden w-full"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feature Strip -->
+      <section class="grid grid-cols-2 md:grid-cols-4 gap-4 fade-in">
+        <div onclick="showPage('trending')" class="card p-5 cursor-pointer">
+          <div class="text-3xl mb-3">📈</div>
+          <h4 class="font-bold text-sm">Nomes em Alta</h4>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Tendências do momento</p>
+        </div>
+        <div onclick="showPage('quiz')" class="card p-5 cursor-pointer">
+          <div class="text-3xl mb-3">🎯</div>
+          <h4 class="font-bold text-sm">Quiz Interativo</h4>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Descubra seu nome ideal</p>
+        </div>
+        <div onclick="showPage('favorites')" class="card p-5 cursor-pointer">
+          <div class="text-3xl mb-3">❤️</div>
+          <h4 class="font-bold text-sm">Favoritos</h4>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Sua lista salva</p>
+        </div>
+        <div onclick="showPage('checker')" class="card p-5 cursor-pointer">
+          <div class="text-3xl mb-3">🔍</div>
+          <h4 class="font-bold text-sm">Disponibilidade</h4>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Redes + Domínio</p>
+        </div>
+      </section>
+
+      <!-- SEO Content -->
+      <section class="card p-6 md:p-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <article>
+            <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-4">O Nome Certo Faz Toda a Diferença</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+              Seja para um <strong>bebê que está chegando</strong>, uma <strong>nova empresa</strong> ou um <strong>personagem inesquecível</strong>, o nome é a primeira e mais importante impressão. No Nomatize, combinamos inteligência artificial, dados de tendências e criatividade para te ajudar a encontrar o nome ideal.
             </p>
-        </section>
+            <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mt-3">
+              Use nosso <strong>gerador combinatório</strong> que cria nomes a partir de sílabas de 10 origens linguísticas diferentes — não apenas sorteando de uma lista. Descubra <strong>significados</strong>, veja quais nomes estão <strong>em alta</strong> e verifique <strong>disponibilidade em redes sociais</strong>.
+            </p>
+          </article>
+          <div class="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-4">📚 Artigos</h4>
+            <ul class="space-y-2">
+              <li><a href="#" onclick="return showArticle('nomes-bebe-2026')" class="block p-3 bg-white dark:bg-slate-800 rounded-xl hover:shadow-md transition-all text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-500">👶 Nomes de bebê mais populares em 2026</a></li>
+              <li><a href="#" onclick="return showArticle('nome-loja-roupas')" class="block p-3 bg-white dark:bg-slate-800 rounded-xl hover:shadow-md transition-all text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-500">👗 Nome ideal para loja de roupas femininas</a></li>
+              <li><a href="#" onclick="return showArticle('nome-confeitaria')" class="block p-3 bg-white dark:bg-slate-800 rounded-xl hover:shadow-md transition-all text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-500">🧁 Gerador de nomes para confeitaria</a></li>
+              <li><a href="#" onclick="return showArticle('nome-startup')" class="block p-3 bg-white dark:bg-slate-800 rounded-xl hover:shadow-md transition-all text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-500">💻 Nomes criativos para startup de tecnologia</a></li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
-        <!-- Main Interface Card -->
-        <section class="bg-white dark:bg-dark rounded-3xl shadow-2xl shadow-blue-900/5 dark:shadow-black/50 border border-slate-200 dark:border-slate-800 overflow-hidden fade-in relative z-10" style="animation-delay: 0.1s;">
-            
-            <!-- Tabs -->
-            <nav class="flex overflow-x-auto border-b border-slate-200 dark:border-slate-800 scrollbar-hide bg-slate-50 dark:bg-slate-900/50">
-                <button class="tab-btn active flex-1 py-5 px-4 md:px-6 text-sm md:text-base font-bold whitespace-nowrap text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none" data-target="baby">👶 Bebês</button>
-                <button class="tab-btn flex-1 py-5 px-4 md:px-6 text-sm md:text-base font-bold whitespace-nowrap text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none" data-target="company">🏢 Empresas</button>
-                <button class="tab-btn flex-1 py-5 px-4 md:px-6 text-sm md:text-base font-bold whitespace-nowrap text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none" data-target="rpg">🐉 RPG</button>
-                <button class="tab-btn flex-1 py-5 px-4 md:px-6 text-sm md:text-base font-bold whitespace-nowrap text-amber-600 dark:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none" data-target="persona">👤 Persona Fictícia</button>
-            </nav>
-
-            <div class="p-6 md:p-10 space-y-8">
-                <!-- Filters Section -->
-                <div id="filters-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 transition-opacity duration-300">
-                    <!-- Dynamic filters injected here -->
-                </div>
-
-                <!-- Generate Action -->
-                <button id="generateBtn" class="w-full py-5 bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white rounded-2xl font-black text-xl shadow-xl shadow-blue-500/20 transform transition-all hover:-translate-y-1 active:translate-y-0 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-500/50">
-                    Gerar Agora
-                </button>
-
-                <!-- Result Display Section -->
-                <div id="resultBox" class="hidden flex-col items-center justify-center p-6 md:p-12 bg-slate-50 dark:bg-slate-900/80 rounded-2xl border border-slate-200 dark:border-slate-800 mt-8 relative group">
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-[0.2em] font-bold">Resultado Encontrado</p>
-                    
-                    <!-- Basic Name Result (for Babies, Companies, RPG) -->
-                    <div id="basicResultContainer" class="flex flex-col md:flex-row items-center gap-4 md:gap-6 w-full justify-center w-full">
-                        <h3 id="generatedName" class="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white text-center break-words tracking-tight max-w-full"></h3>
-                        <button id="copyBasicBtn" class="mt-4 md:mt-0 p-4 bg-white dark:bg-slate-800 rounded-full shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all text-blue-600 dark:text-blue-400 border border-slate-100 dark:border-slate-700 focus:outline-none flex-shrink-0" title="Copiar">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                        </button>
-                    </div>
-
-                    <!-- Detailed Persona Card (Fake Name Generator Style) -->
-                    <div id="personaCardContainer" class="hidden w-full flex-col bg-white dark:bg-slate-800 border-2 border-amber-200 dark:border-amber-900/50 rounded-2xl shadow-xl overflow-hidden relative mt-2">
-                        <!-- Warning Banner -->
-                        <div class="bg-amber-500 text-white text-xs md:text-sm font-bold text-center py-2 px-4 uppercase tracking-wider flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
-                            DADOS GERADOS ALEATORIAMENTE. SEM VALIDADE LEGAL.
-                        </div>
-                        
-                        <div class="p-6 md:p-8 relative">
-                            <!-- Copy Button -->
-                            <button id="copyPersonaBtn" class="absolute top-6 right-6 p-3 bg-blue-100 dark:bg-blue-900/40 rounded-full shadow hover:bg-blue-200 hover:scale-105 transition-all text-blue-600 dark:text-blue-400 focus:outline-none group z-10" title="Copiar Ficha Completa">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                            </button>
-
-                            <!-- Profile Header -->
-                            <div class="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8 border-b border-slate-100 dark:border-slate-700 pb-8">
-                                <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-teal-400 rounded-full flex items-center justify-center text-4xl font-black text-white shadow-lg flex-shrink-0" id="personaInitial">A</div>
-                                <div class="text-center md:text-left flex-1">
-                                    <h3 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-2" id="personaName">Nome Completo</h3>
-                                    <p class="text-slate-500 dark:text-slate-400 font-medium text-lg mb-1 flex items-center justify-center md:justify-start gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                                        <span id="personaProf">Profissão</span>
-                                    </p>
-                                    <p class="text-slate-600 dark:text-slate-300 text-sm flex items-center justify-center md:justify-start gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                        <span id="personaAddressTop">Endereço Principal</span>
-                                    </p>
-                                </div>
-                            </div>
-                            
-                            <!-- Detailed Data Grids -->
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                
-                                <!-- Seção: Pessoais -->
-                                <div class="persona-section space-y-4">
-                                    <h4 class="text-base font-bold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 pb-2 flex items-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
-                                        Dados Pessoais
-                                    </h4>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div><span class="persona-label">CPF (Válido para máscara)</span><span class="persona-value mono text-blue-600 dark:text-blue-400" id="personaCpf"></span></div>
-                                        <div><span class="persona-label">RG (Fictício)</span><span class="persona-value mono" id="personaRg"></span></div>
-                                        <div><span class="persona-label">Data de Nascimento</span><span class="persona-value" id="personaBirth"></span></div>
-                                        <div><span class="persona-label">Idade</span><span class="persona-value" id="personaAgeVal"></span></div>
-                                        <div class="col-span-2"><span class="persona-label">Nome da Mãe</span><span class="persona-value" id="personaMother"></span></div>
-                                        <div class="col-span-2"><span class="persona-label">Certidão de Nasc. (Fictícia)</span><span class="persona-value text-sm" id="personaCert"></span></div>
-                                    </div>
-                                </div>
-
-                                <!-- Seção: Contato & Online -->
-                                <div class="persona-section space-y-4">
-                                    <h4 class="text-base font-bold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 pb-2 flex items-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-teal-500" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" /><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" /></svg>
-                                        Contato & Acesso
-                                    </h4>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div class="col-span-2"><span class="persona-label">Telefone Celular</span><span class="persona-value mono" id="personaPhone"></span></div>
-                                        <div class="col-span-2"><span class="persona-label">E-mail Pessoal</span><span class="persona-value text-blue-500" id="personaEmail"></span></div>
-                                        <div><span class="persona-label">Username</span><span class="persona-value font-mono text-sm" id="personaUser"></span></div>
-                                        <div><span class="persona-label">Senha Gerada</span><span class="persona-value font-mono text-sm" id="personaPass"></span></div>
-                                    </div>
-                                </div>
-
-                                <!-- Seção: Financeiro -->
-                                <div class="persona-section space-y-4">
-                                    <h4 class="text-base font-bold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 pb-2 flex items-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" /><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" /></svg>
-                                        Financeiro (Cartão Fake)
-                                    </h4>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div class="col-span-2"><span class="persona-label">Cartão de Crédito Fictício</span><span class="persona-value mono" id="personaCard"></span></div>
-                                        <div><span class="persona-label">Validade</span><span class="persona-value mono" id="personaCardExp"></span></div>
-                                        <div><span class="persona-label">CVV</span><span class="persona-value mono" id="personaCardCvv"></span></div>
-                                        <div class="col-span-2 mt-2"><span class="persona-label">Empresa</span><span class="persona-value" id="personaCompany"></span></div>
-                                        <div><span class="persona-label">Renda Mensal Est.</span><span class="persona-value text-emerald-600 dark:text-emerald-400 font-bold" id="personaSalary"></span></div>
-                                    </div>
-                                </div>
-
-                                <!-- Seção: Físico & Outros -->
-                                <div class="persona-section space-y-4">
-                                    <h4 class="text-base font-bold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 pb-2 flex items-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" /></svg>
-                                        Físico & Misc
-                                    </h4>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div><span class="persona-label">Altura</span><span class="persona-value" id="personaHeight"></span></div>
-                                        <div><span class="persona-label">Peso</span><span class="persona-value" id="personaWeight"></span></div>
-                                        <div><span class="persona-label">Tipo Sanguíneo</span><span class="persona-value text-red-500 font-bold" id="personaBlood"></span></div>
-                                        <div><span class="persona-label">Signo</span><span class="persona-value" id="personaZodiac"></span></div>
-                                        <div><span class="persona-label">Cor Favorita</span><span class="persona-value" id="personaColor"></span></div>
-                                        <div><span class="persona-label">Veículo (Placa Fake)</span><span class="persona-value mono" id="personaPlate"></span></div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="copyToast" class="absolute -top-12 bg-slate-900 dark:bg-teal-500 text-white font-semibold px-4 py-2 rounded-lg opacity-0 transition-all duration-300 shadow-lg pointer-events-none transform translate-y-2 z-50">Copiado!</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- History Section -->
-        <section class="fade-in bg-white/50 dark:bg-dark/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-800" style="animation-delay: 0.2s;">
-            <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800 dark:text-slate-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" /></svg>
-                Últimas Criações
-            </h3>
-            <div id="historyContainer" class="flex flex-wrap gap-3">
-                <p class="text-slate-500 dark:text-slate-400 text-sm italic">O histórico aparecerá aqui...</p>
-            </div>
-        </section>
-
-    </main>
-
-        <!-- Lateral Direita (AdSense) -->
-        <aside class="hidden xl:flex w-[200px] 2xl:w-[300px] flex-shrink-0 flex-col items-center pt-8 px-4">
-            <ins class="adsbygoogle"
-                 style="display:block; width:100%; height:600px;"
-                 data-ad-client="ca-pub-8109622672701567"
-                 data-ad-slot=""
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </aside>
+      <!-- History -->
+      <section class="card p-6">
+        <h3 class="font-bold text-slate-800 dark:text-slate-200 mb-4 flex items-center gap-2">
+          <svg class="w-5 h-5 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Últimas Criações
+        </h3>
+        <div id="historyContainer" class="flex flex-wrap gap-2">
+          <p class="text-slate-500 dark:text-slate-400 text-sm italic">O histórico aparecerá aqui...</p>
+        </div>
+      </section>
     </div>
 
-    <!-- SEO & Footer Section -->
-    <footer class="bg-white dark:bg-dark border-t border-slate-200 dark:border-slate-800 pt-16 pb-8 mt-16 relative z-10">
-        <div class="max-w-5xl mx-auto px-4 md:px-8 space-y-12">
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-                <article class="prose prose-slate dark:prose-invert max-w-none">
-                    <h4 class="text-2xl font-black text-slate-900 dark:text-white mb-4">A Importância de um Bom Nome e Dados de Teste</h4>
-                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
-                        O nome é a primeira impressão, seja para um bebê, empresa ou personagem. Porém, para desenvolvedores e analistas de qualidade (QA), gerar <strong>Personas Fakes</strong> e <strong>CPFs válidos matematicamente</strong> é essencial para testar cadastros, fluxos de pagamento e sistemas internos sem ferir a LGPD ou comprometer dados reais.
-                    </p>
-                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm mt-4">
-                        Nosso <strong>Gerador de Nomes e Personas Avançado</strong> atende todas as frentes: criatividade para o seu dia a dia e eficiência técnica (com dados simulados completos ao estilo Fake Name Generator) para validar seu software. Importante: <em>Nenhum dado de Persona possui valor legal ou corresponde a um indivíduo real.</em>
-                    </p>
-                </article>
-                
-                <div class="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
-                    <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-6">Explore o Ecossistema MMC</h4>
-                    <ul class="space-y-4">
-                        <li>
-                            <a href="https://pomofoco.com.br" target="_blank" rel="noopener noreferrer" class="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl hover:shadow-md transition-all border border-slate-100 dark:border-slate-700">
-                                <div>
-                                    <span class="block font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-500 transition-colors">Pomofoco</span>
-                                    <span class="text-sm text-slate-500">Temporizador Pomodoro para foco extremo.</span>
-                                </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 group-hover:text-blue-500 transition-colors transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://conversor.dev.br" target="_blank" rel="noopener noreferrer" class="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl hover:shadow-md transition-all border border-slate-100 dark:border-slate-700">
-                                <div>
-                                    <span class="block font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-500 transition-colors">Conversor Dev</span>
-                                    <span class="text-sm text-slate-500">Ferramentas úteis para desenvolvedores.</span>
-                                </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 group-hover:text-blue-500 transition-colors transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://atualizaconta.com.br" target="_blank" rel="noopener noreferrer" class="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl hover:shadow-md transition-all border border-slate-100 dark:border-slate-700">
-                                <div>
-                                    <span class="block font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-500 transition-colors">Atualiza Conta</span>
-                                    <span class="text-sm text-slate-500">Gestão e atualização de contas simples.</span>
-                                </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 group-hover:text-blue-500 transition-colors transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500 font-medium">
-                <p>&copy; 2026 Nomatize. Desenvolvido com ❤️ por <span class="font-bold text-slate-800 dark:text-slate-200">MMC Codes</span>.</p>
-            </div>
+    <!-- ===== PAGE: TRENDING ===== -->
+    <div id="page-trending" class="page-content hidden space-y-8">
+      <section class="text-center fade-in">
+        <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white">📈 Nomes em Tendência</h2>
+        <p class="text-slate-500 dark:text-slate-400 mt-3 max-w-xl mx-auto">Veja quais nomes estão subindo ou descendo de popularidade no Brasil (dados estimados).</p>
+      </section>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in">
+        <div class="lg:col-span-2 card p-6">
+          <h3 class="font-bold text-slate-800 dark:text-slate-200 mb-4">Evolução da Popularidade</h3>
+          <div style="height: 300px;"><canvas id="trendChart"></canvas></div>
+          <div class="flex gap-3 mt-4 justify-center">
+            <button onclick="switchTrendView('masculino')" class="trend-toggle px-4 py-2 rounded-full text-sm font-bold bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">Masculinos</button>
+            <button onclick="switchTrendView('feminino')" class="trend-toggle px-4 py-2 rounded-full text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">Femininos</button>
+          </div>
         </div>
-    </footer>
+        <div class="space-y-4">
+          <div class="card p-5">
+            <h3 class="font-bold text-sm text-emerald-600 dark:text-emerald-400 mb-3 flex items-center gap-2">🔥 Subindo</h3>
+            <div id="trendingUp" class="space-y-2"></div>
+          </div>
+          <div class="card p-5">
+            <h3 class="font-bold text-sm text-red-600 dark:text-red-400 mb-3 flex items-center gap-2">📉 Descendo</h3>
+            <div id="trendingDown" class="space-y-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <!-- JavaScript Data & Logic -->
-    <script>
-        // Data Sources
-        const data = {
-            baby: {
-                gender: {
-                    masculino: {
-                        classic: ["João", "Pedro", "Miguel", "Arthur", "Heitor", "Bernardo", "Davi", "Gabriel", "Lucas", "Matheus", "Rafael", "Guilherme", "Gustavo", "Felipe", "Daniel", "Antônio", "Carlos", "Eduardo", "Francisco", "Marcos", "Ricardo", "Roberto", "Sérgio"],
-                        modern: ["Enzo", "Theo", "Gael", "Ravi", "Noah", "Levi", "Cauã", "Rael", "Zion", "Lucca", "Kalel", "Yan", "Otto", "Luan", "Cauê", "Thales", "Yuri", "Breno", "Kauan", "Henry"],
-                        international: ["James", "William", "Oliver", "Benjamin", "Elijah", "Lucas", "Mason", "Logan", "Alexander", "Ethan", "Jacob", "Michael", "Daniel", "Henry", "Jackson", "Sebastian", "Aiden", "Matthew", "Samuel", "David"]
-                    },
-                    feminino: {
-                        classic: ["Maria", "Ana", "Julia", "Alice", "Sophia", "Laura", "Manuela", "Isabella", "Luiza", "Helena", "Valentina", "Giovanna", "Beatriz", "Mariana", "Gabriela", "Fernanda", "Letícia", "Amanda", "Camila", "Rafaela"],
-                        modern: ["Maya", "Luna", "Zoe", "Chloe", "Isis", "Ayla", "Mel", "Liz", "Maitê", "Aurora", "Bella", "Eloá", "Jade", "Lívia", "Mirella", "Pietra", "Yasmin", "Alícia", "Clara", "Íris"],
-                        international: ["Emma", "Olivia", "Ava", "Isabella", "Sophia", "Charlotte", "Mia", "Amelia", "Harper", "Evelyn", "Abigail", "Emily", "Elizabeth", "Mila", "Ella", "Avery", "Sofia", "Camila", "Aria", "Scarlett"]
-                    },
-                    unissex: {
-                        classic: ["Alex", "Ariel", "Duda", "Cris", "Dani", "Manu", "Rafa", "Gabi", "Gui", "Leo", "Val", "Fran", "Ju", "Sol", "Céu"],
-                        modern: ["Kim", "Jordan", "Taylor", "Casey", "Morgan", "Riley", "Avery", "Cameron", "Quinn", "Skyler", "Dakota", "Reese", "Rowan", "Sage", "Peyton"],
-                        international: ["Charlie", "Robin", "Jamie", "Harper", "Rowan", "Finley", "River", "Emerson", "Hayden", "Dakota", "Phoenix", "Justice", "Milan", "Armani", "Lennon"]
-                    }
-                },
-                surnames: ["Silva", "Santos", "Oliveira", "Souza", "Rodrigues", "Ferreira", "Alves", "Pereira", "Lima", "Gomes", "Costa", "Ribeiro", "Martins", "Carvalho", "Almeida", "Lopes", "Soares", "Fernandes", "Vieira", "Barbosa", "Melo", "Barros", "Cardoso", "Rocha", "Dias", "Mendes", "Nunes", "Correia", "Castro", "Cunha"]
-            },
-            company: {
-                tech: {
-                    prefix: ["Tech", "Inno", "Nova", "Data", "Cloud", "Sync", "Cyber", "Omni", "Meta", "Nexus", "Code", "Byte", "AI", "Logic", "Net", "Sys", "Web", "App", "Dev", "Soft", "Quant", "Virtu", "Aero", "Bio"],
-                    suffix: ["base", "flow", "ify", "ly", "onics", "ware", "hub", "works", "labs", "matrix", "sphere", "gen", "x", "ops", "it", "sync", "link", "net", "tech", "com", "cast", "grid", "node"]
-                },
-                fashion: {
-                    prefix: ["Bella", "Glam", "Luxe", "Aura", "Vogue", "Chic", "Elegance", "Style", "Trend", "Mode", "Pura", "Diva", "Nova", "Haute", "Silk", "Velvet", "Satin", "Pearl", "Jewel", "Crown", "Aesthet", "Chroma"],
-                    suffix: ["Boutique", "Studio", "Salon", "Atelier", "Concept", "Collection", "Wear", "Apparels", "Beauty", "Spa", "Care", "Looks", "Threads", "Stitches", "Wardrobe", "Closet", "Garments", "Style", "Fashion", "Design"]
-                },
-                food: {
-                    prefix: ["Sabor", "Gusto", "Delícia", "Chef", "Grill", "Fresh", "Doce", "Sal", "Aroma", "Nutri", "Veg", "Meat", "Bakes", "Brew", "Spice", "Herb", "Taste", "Food", "Bite", "Snack", "Palate", "Crave", "Feast"],
-                    suffix: ["Burger", "Pizza", "Sushi", "Bistro", "Cafe", "Restô", "Express", "Delivery", "Kitchen", "House", "Spot", "Bar", "Lounge", "Station", "Point", "Corner", "Hub", "Shack", "Truck", "Box", "Eats", "Dine"]
-                },
-                finance: {
-                    prefix: ["Alpha", "Prime", "Apex", "Summit", "Vertex", "Capital", "Trust", "Wealth", "Valor", "Equinox", "Nexus", "Core", "Global", "Pro", "Elite", "Secure", "Clear", "Smart", "True", "Next", "Aegis", "Fort", "Crest"],
-                    suffix: ["Consulting", "Partners", "Advisors", "Group", "Capital", "Holdings", "Ventures", "Solutions", "Strategies", "Management", "Finance", "Wealth", "Invest", "Trust", "Bank", "Credit", "Funds", "Assets", "Broker", "Associates"]
-                }
-            },
-            rpg: {
-                medieval: {
-                    male: ["Aragorn", "Legolas", "Gimli", "Gandalf", "Thorin", "Elrond", "Bofur", "Kili", "Fili", "Balin", "Dwalin", "Oin", "Gloin", "Ori", "Nori", "Dori", "Bifur", "Bombur", "Bard", "Thranduil", "Boromir", "Faramir"],
-                    female: ["Arwen", "Galadriel", "Eowyn", "Tauriel", "Luthien", "Melian", "Idril", "Nienor", "Finduilas", "Morwen", "Haleth", "Elwing", "Aredhel", "Celebrian", "Earwen", "Indis", "Nerdanel", "Varda", "Yavanna", "Nienna"],
-                    surname: ["the Brave", "Ironfist", "Oakenshield", "Swiftbow", "the Wise", "Shadowalker", "Lightbringer", "Dragonslayer", "the Strong", "the Swift", "Silverleaf", "Starlight", "Deepdelver", "Firebeard", "Stonehelm", "the Bold", "the Fair", "the Dark", "the White", "the Grey"]
-                },
-                cyberpunk: {
-                    male: ["Neo", "Jace", "Zane", "Kael", "Ryker", "Jax", "Dash", "Orion", "Nova", "Silas", "Finn", "Knox", "Kade", "Zephyr", "Jett", "Rex", "Nash", "Cruz", "Dax", "Kian"],
-                    female: ["Trinity", "Nova", "Lyra", "Kael", "Zoya", "Rya", "Nix", "Kira", "Jada", "Zara", "Quinn", "Skye", "Lexa", "Xena", "Rhea", "Veda", "Cleo", "Yara", "Ziva", "Kori"],
-                    surname: ["Null", "Void", "Glitch", "Hack", "Byte", "Cipher", "Neon", "Chrome", "Wire", "Mesh", "Grid", "Core", "Pulse", "Synth", "Flux", "Spark", "Drift", "Shift", "Zero", "Echo"]
-                },
-                horror: {
-                    male: ["Victor", "Alistair", "Dorian", "Silas", "Lucius", "Barnabas", "Gideon", "Edgar", "Arthur", "Edward", "William", "Charles", "Thomas", "Henry", "George", "James", "Richard", "Joseph", "John", "Robert"],
-                    female: ["Victoria", "Beatrice", "Eleanor", "Genevieve", "Ophelia", "Cordelia", "Evangeline", "Josephine", "Charlotte", "Clara", "Alice", "Florence", "Grace", "Lily", "Rose", "Mary", "Sarah", "Emma", "Margaret", "Anne"],
-                    surname: ["Blackwood", "Ravenscroft", "Bloodgood", "Nightshade", "Graves", "Vane", "Thorne", "Crane", "Hyde", "Jekyll", "Frankenstein", "Dracula", "Harker", "Van Helsing", "Seward", "Holmwood", "Morris", "Westenra", "Murray", "Renfield"]
-                }
-            },
-            persona: {
-                professions: ["Analista de Sistemas", "Desenvolvedor(a) Front-end", "Engenheiro(a) de Software", "Designer Gráfico", "Gerente de Projetos", "Analista de Marketing", "Contador(a)", "Advogado(a)", "Médico(a) Clínico", "Enfermeiro(a)", "Arquiteto(a)", "Engenheiro(a) Civil", "Professor(a)", "Fotógrafo(a)", "Chef de Cozinha", "Jornalista", "Psicólogo(a)", "Consultor(a) Financeiro", "Administrador(a)", "Eletricista", "Motorista de App", "Analista de Dados", "Cientista de Dados", "Veterinário(a)", "Farmacêutico(a)"],
-                address: {
-                    prefix: ["Rua", "Avenida", "Praça", "Alameda", "Travessa", "Rodovia"],
-                    names: ["das Flores", "dos Ipês", "das Acácias", "das Palmeiras", "Central", "Principal", "do Sol", "da Lua", "Castelo Branco", "Tiradentes", "Sete de Setembro", "Getúlio Vargas", "Santo Antônio", "São José", "da Paz", "da Esperança", "do Comércio", "Bandeirantes", "São Paulo", "Brasil", "Quinze de Novembro", "Rui Barbosa", "Machado de Assis"],
-                    cities: ["São Paulo/SP", "Rio de Janeiro/RJ", "Belo Horizonte/MG", "Curitiba/PR", "Porto Alegre/RS", "Salvador/BA", "Fortaleza/CE", "Recife/PE", "Brasília/DF", "Goiânia/GO", "Manaus/AM", "Belém/PA", "Florianópolis/SC", "Vitória/ES", "Natal/RN", "Campinas/SP", "Ribeirão Preto/SP", "Uberlândia/MG", "Londrina/PR", "João Pessoa/PB", "Maceió/AL", "Aracaju/SE", "Cuiabá/MT", "Campo Grande/MS"]
-                },
-                emails: ["@gmail.com", "@yahoo.com.br", "@hotmail.com", "@outlook.com", "@live.com", "@uol.com.br", "@bol.com.br"],
-                bloodTypes: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
-                zodiacs: ["Áries", "Touro", "Gêmeos", "Câncer", "Leão", "Virgem", "Libra", "Escorpião", "Sagitário", "Capricórnio", "Aquário", "Peixes"],
-                colors: ["Azul", "Vermelho", "Verde", "Preto", "Branco", "Amarelo", "Roxo", "Laranja", "Cinza", "Rosa", "Marrom"]
-            }
-        };
+    <!-- ===== PAGE: QUIZ ===== -->
+    <div id="page-quiz" class="page-content hidden space-y-8">
+      <section class="text-center fade-in">
+        <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white">🎯 Quiz Interativo</h2>
+        <p class="text-slate-500 dark:text-slate-400 mt-3 max-w-xl mx-auto">Responda 5 perguntas e descubra o nome ideal para seu filho!</p>
+      </section>
 
-        // UI Configurations
-        const selectSVG = `<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500"><svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg></div>`;
-        const selectClass = "appearance-none w-full p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-0 focus:border-blue-500 dark:focus:border-blue-400 outline-none transition-colors cursor-pointer font-medium shadow-sm";
+      <div id="quizContainer" class="card p-6 md:p-10 max-w-2xl mx-auto w-full fade-in">
+        <div class="flex items-center gap-3 mb-8">
+          <div class="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+            <div id="quizProgress" class="h-full bg-gradient-to-r from-blue-500 to-teal-400 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <span id="quizStep" class="text-sm font-bold text-slate-500 flex-shrink-0">1/5</span>
+        </div>
+        <div id="quizContent" class="min-h-[280px]"></div>
+        <div class="flex justify-between mt-8">
+          <button id="quizPrevBtn" onclick="quizPrev()" class="btn btn-ghost hidden">← Voltar</button>
+          <button id="quizNextBtn" onclick="quizNext()" class="btn btn-primary ml-auto">Continuar →</button>
+        </div>
+      </div>
 
-        const filterConfigs = {
-            baby: `
-                <div class="space-y-3">
-                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Gênero</label>
-                    <div class="relative">
-                        <select id="babyGender" class="${selectClass}">
-                            <option value="masculino">Masculino</option>
-                            <option value="feminino">Feminino</option>
-                            <option value="unissex">Unissex</option>
-                        </select>
-                        ${selectSVG}
-                    </div>
-                </div>
-                <div class="space-y-3">
-                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Estilo / Origem</label>
-                    <div class="relative">
-                        <select id="babyStyle" class="${selectClass}">
-                            <option value="classic">Clássico & Tradicional</option>
-                            <option value="modern">Moderno & Tendência</option>
-                            <option value="international">Internacional</option>
-                        </select>
-                        ${selectSVG}
-                    </div>
-                </div>
-            `,
-            company: `
-                <div class="space-y-3 md:col-span-2">
-                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Nicho de Atuação</label>
-                    <div class="relative">
-                        <select id="companyNiche" class="${selectClass}">
-                            <option value="tech">Tecnologia, SaaS & Inovação</option>
-                            <option value="fashion">Moda, Beleza & Estética</option>
-                            <option value="food">Alimentação, Gastronomia & Bebidas</option>
-                            <option value="finance">Finanças, Consultoria & B2B</option>
-                        </select>
-                        ${selectSVG}
-                    </div>
-                </div>
-            `,
-            rpg: `
-                <div class="space-y-3">
-                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Cenário / Universo</label>
-                    <div class="relative">
-                        <select id="rpgStyle" class="${selectClass}">
-                            <option value="medieval">Fantasia Medieval (Elfos, Anões)</option>
-                            <option value="cyberpunk">Cyberpunk & Sci-Fi Futurista</option>
-                            <option value="horror">Terror Gótico & Vitoriano</option>
-                        </select>
-                        ${selectSVG}
-                    </div>
-                </div>
-                <div class="space-y-3">
-                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Gênero do Personagem</label>
-                    <div class="relative">
-                        <select id="rpgGender" class="${selectClass}">
-                            <option value="male">Masculino</option>
-                            <option value="female">Feminino</option>
-                        </select>
-                        ${selectSVG}
-                    </div>
-                </div>
-            `,
-            persona: `
-                <div class="space-y-3">
-                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Gênero da Persona</label>
-                    <div class="relative">
-                        <select id="personaGender" class="${selectClass}">
-                            <option value="random">Aleatório (Qualquer)</option>
-                            <option value="masculino">Masculino</option>
-                            <option value="feminino">Feminino</option>
-                        </select>
-                        ${selectSVG}
-                    </div>
-                </div>
-                <div class="space-y-3">
-                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Faixa Etária</label>
-                    <div class="relative">
-                        <select id="personaAge" class="${selectClass}">
-                            <option value="adult">Adulto (25 a 50 anos)</option>
-                            <option value="young">Jovem Adulto (18 a 24 anos)</option>
-                            <option value="senior">Sênior (50+ anos)</option>
-                        </select>
-                        ${selectSVG}
-                    </div>
-                </div>
-            `
-        };
+      <div id="quizResult" class="hidden card p-8 md:p-12 max-w-2xl mx-auto w-full text-center fade-in">
+        <div class="text-6xl mb-4">🎉</div>
+        <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2">Seu Nome Ideal é:</h3>
+        <div id="quizResultName" class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500 my-6"></div>
+        <p id="quizResultReason" class="text-slate-500 dark:text-slate-400 mb-6"></p>
+        <div class="flex gap-3 justify-center">
+          <button onclick="toggleFavName(document.getElementById('quizResultName').textContent)" class="btn btn-sm btn-ghost">❤️ Favoritar</button>
+          <button onclick="resetQuiz()" class="btn btn-sm btn-ghost">🔄 Refazer</button>
+        </div>
+      </div>
+    </div>
 
-        // Application State
-        let currentCategory = 'baby';
-        let historyList = [];
-        let lastGeneratedPersona = null;
+    <!-- ===== PAGE: CHECKER ===== -->
+    <div id="page-checker" class="page-content hidden space-y-8">
+      <section class="text-center fade-in">
+        <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white">🔍 Disponibilidade</h2>
+        <p class="text-slate-500 dark:text-slate-400 mt-3 max-w-xl mx-auto">Verifique se o nome da sua marca está disponível em redes sociais e domínios.</p>
+      </section>
 
-        // Core Functions
-        const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
-        const getRndNum = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-        
-        // Remove accents for username/email
-        const removeAccents = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      <section class="max-w-2xl mx-auto w-full card p-6 fade-in">
+        <div class="glow-border flex items-center bg-white dark:bg-slate-800 rounded-2xl overflow-hidden">
+          <input id="checkInput" type="text" placeholder="Digite o nome da marca..." class="w-full p-4 bg-transparent outline-none text-slate-900 dark:text-white placeholder-slate-400 font-medium">
+          <button id="checkBtn" onclick="runChecker()" class="bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-bold px-6 py-4 transition-colors flex-shrink-0">Verificar</button>
+        </div>
+        <div id="checkResults" class="mt-6 hidden"></div>
+      </section>
+    </div>
 
-        // Persona Generators
-        function generateValidCPF() {
-            const num = (n) => Math.round(Math.random() * n);
-            const mod = (dividendo, divisor) => Math.round(dividendo - (Math.floor(dividendo / divisor) * divisor));
-            
-            let n1 = num(9), n2 = num(9), n3 = num(9), n4 = num(9), n5 = num(9);
-            let n6 = num(9), n7 = num(9), n8 = num(9), n9 = num(9);
-            
-            let d1 = n9*2 + n8*3 + n7*4 + n6*5 + n5*6 + n4*7 + n3*8 + n2*9 + n1*10;
-            d1 = 11 - (mod(d1, 11));
-            if (d1 >= 10) d1 = 0;
-            
-            let d2 = d1*2 + n9*3 + n8*4 + n7*5 + n6*6 + n5*7 + n4*8 + n3*9 + n2*10 + n1*11;
-            d2 = 11 - (mod(d2, 11));
-            if (d2 >= 10) d2 = 0;
-            
-            return `${n1}${n2}${n3}.${n4}${n5}${n6}.${n7}${n8}${n9}-${d1}${d2}`;
-        }
+    <!-- ===== PAGE: FAVORITES ===== -->
+    <div id="page-favorites" class="page-content hidden space-y-8">
+      <section class="text-center fade-in">
+        <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white">❤️ Meus Favoritos</h2>
+        <p class="text-slate-500 dark:text-slate-400 mt-3 max-w-xl mx-auto">Seus nomes salvos para comparar e compartilhar.</p>
+      </section>
 
-        function generateFakeRG() {
-            return `${getRndNum(10,99)}.${getRndNum(100,999)}.${getRndNum(100,999)}-${getRndNum(0,9)}`;
-        }
+      <section class="max-w-2xl mx-auto w-full fade-in">
+        <div id="favoritesEmpty" class="text-center py-16">
+          <div class="text-6xl mb-4">💔</div>
+          <p class="text-slate-500 dark:text-slate-400">Nenhum nome favoritado ainda.</p>
+          <button onclick="showPage('home')" class="btn btn-primary mt-4">🎲 Gerar nomes</button>
+        </div>
+        <div id="favoritesList" class="space-y-3"></div>
+      </section>
+    </div>
 
-        function generateBirthDateAndAge(ageGroup) {
-            let minAge, maxAge;
-            if(ageGroup === 'young') { minAge = 18; maxAge = 24; }
-            else if(ageGroup === 'senior') { minAge = 50; maxAge = 80; }
-            else { minAge = 25; maxAge = 49; }
+  </div>
 
-            const age = getRndNum(minAge, maxAge);
-            const currentYear = new Date().getFullYear();
-            const year = currentYear - age;
-            const monthNum = getRndNum(1, 12);
-            const month = monthNum.toString().padStart(2, '0');
-            
-            let daysInMonth = new Date(year, month, 0).getDate();
-            const day = getRndNum(1, daysInMonth).toString().padStart(2, '0');
-            
-            // Assign Zodiac based on month (approximate)
-            const zodiacs = data.persona.zodiacs;
-            const zodiac = zodiacs[monthNum - 1]; // Roughly
-            
-            return {
-                date: `${day}/${month}/${year}`,
-                age: age,
-                zodiac: zodiac
-            };
-        }
+  <!-- ===== FOOTER ===== -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 py-8 mt-8">
+    <div class="container text-center text-xs text-slate-500">
+      <p class="font-bold text-slate-700 dark:text-slate-300 text-sm mb-2">Nomatize — Gerador Inteligente de Nomes</p>
+      <p>© 2026 Nomatize. Todos os dados de persona são 100% fictícios. Nenhum dado real é armazenado.</p>
+      <p class="mt-1">Feito com ❤️ para quem busca o nome perfeito.</p>
+    </div>
+  </footer>
 
-        function generateFakeAddress() {
-            const addrData = data.persona.address;
-            const prefix = getRandom(addrData.prefix);
-            const name = getRandom(addrData.names);
-            const num = getRndNum(10, 9999);
-            const cityState = getRandom(addrData.cities);
-            const cep1 = getRndNum(10000, 99999);
-            const cep2 = getRndNum(100, 999);
-            
-            return `${prefix} ${name}, ${num} - Bairro Central - ${cityState} - CEP: ${cep1}-${cep2}`;
-        }
+  <!-- ===== TOAST ===== -->
+  <div class="toast"></div>
 
-        function generateFakeCert() {
-            return `Livro A-${getRndNum(10,99)}, Fls ${getRndNum(100,999)}, Termo ${getRndNum(1000,9999)}`;
-        }
+  <!-- ===== SCRIPTS ===== -->
+  <script type="module" src="js/app.js"></script>
 
-        function generatePhone() {
-            const ddd = getRndNum(11, 99);
-            const p1 = getRndNum(1000, 9999);
-            const p2 = getRndNum(1000, 9999);
-            return `(${ddd}) 9${p1}-${p2}`;
-        }
-
-        function generateCreditCard() {
-            // 4 is Visa, 5 is Mastercard
-            const isVisa = Math.random() > 0.5;
-            const flag = isVisa ? "Visa" : "Mastercard";
-            const start = isVisa ? "4" : "5";
-            
-            const n1 = start + getRndNum(100, 999).toString();
-            const n2 = getRndNum(1000, 9999).toString();
-            const n3 = getRndNum(1000, 9999).toString();
-            const n4 = getRndNum(1000, 9999).toString();
-            
-            const month = getRndNum(1, 12).toString().padStart(2, '0');
-            const year = (new Date().getFullYear() + getRndNum(1, 5)).toString().substring(2);
-            
-            return {
-                flag: flag,
-                number: `${n1} ${n2} ${n3} ${n4}`,
-                exp: `${month}/${year}`,
-                cvv: getRndNum(100, 999).toString()
-            };
-        }
-
-        function generateCompany() {
-            const techPrefix = getRandom(data.company.tech.prefix);
-            const techSuffix = getRandom(data.company.tech.suffix);
-            const useTech = Math.random() > 0.5;
-            
-            if(useTech) return `${techPrefix}${techSuffix.toLowerCase()} Ltda`;
-            
-            const finPrefix = getRandom(data.company.finance.prefix);
-            const finSuffix = getRandom(data.company.finance.suffix);
-            return `${finPrefix} ${finSuffix} S.A.`;
-        }
-
-        function generatePhysical(gender) {
-            let hMin = gender === 'masculino' ? 165 : 155;
-            let hMax = gender === 'masculino' ? 190 : 175;
-            const height = getRndNum(hMin, hMax) / 100;
-            
-            // IMC approx 19 to 28
-            const imc = getRndNum(190, 280) / 10;
-            const weight = (imc * (height * height)).toFixed(1);
-            
-            return {
-                height: height.toFixed(2) + 'm',
-                weight: weight + 'kg',
-                blood: getRandom(data.persona.bloodTypes)
-            };
-        }
-
-        function generateLicensePlate() {
-            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            const l1 = letters.charAt(Math.floor(Math.random() * letters.length));
-            const l2 = letters.charAt(Math.floor(Math.random() * letters.length));
-            const l3 = letters.charAt(Math.floor(Math.random() * letters.length));
-            const n1 = getRndNum(0, 9);
-            const l4 = letters.charAt(Math.floor(Math.random() * letters.length)); // Mercosul format
-            const n2 = getRndNum(0, 9);
-            const n3 = getRndNum(0, 9);
-            return `${l1}${l2}${l3}${n1}${l4}${n2}${n3}`; // ABC1D23
-        }
-
-        // Main Generator Controller
-        function generateName() {
-            let resultName = '';
-            
-            // Hide outputs to reset
-            document.getElementById('basicResultContainer').classList.add('hidden');
-            document.getElementById('personaCardContainer').classList.add('hidden');
-            document.getElementById('personaCardContainer').classList.remove('flex');
-            
-            if (currentCategory === 'baby') {
-                const gender = document.getElementById('babyGender').value;
-                const style = document.getElementById('babyStyle').value;
-                const nameList = data.baby.gender[gender][style];
-                const surnameList = data.baby.surnames;
-                resultName = `${getRandom(nameList)} ${getRandom(surnameList)}`;
-                showBasicResult(resultName);
-            } 
-            else if (currentCategory === 'company') {
-                const niche = document.getElementById('companyNiche').value;
-                const prefix = getRandom(data.company[niche].prefix);
-                const suffix = getRandom(data.company[niche].suffix);
-                
-                if (niche === 'tech') resultName = `${prefix}${suffix.toLowerCase()}`;
-                else resultName = `${prefix} ${suffix}`;
-                showBasicResult(resultName);
-            }
-            else if (currentCategory === 'rpg') {
-                const style = document.getElementById('rpgStyle').value;
-                const gender = document.getElementById('rpgGender').value;
-                const nameList = data.rpg[style][gender];
-                const surnameList = data.rpg[style].surname;
-                const surname = getRandom(surnameList);
-                
-                if(surname.startsWith('the')) resultName = `${getRandom(nameList)} ${surname}`;
-                else resultName = `${getRandom(nameList)} ${surname}`;
-                showBasicResult(resultName);
-            }
-            else if (currentCategory === 'persona') {
-                let reqGender = document.getElementById('personaGender').value;
-                const ageGroup = document.getElementById('personaAge').value;
-                
-                const gender = reqGender === 'random' ? (Math.random() > 0.5 ? 'masculino' : 'feminino') : reqGender;
-
-                // Name Generation
-                const firstName = getRandom(data.baby.gender[gender].modern);
-                const lastName1 = getRandom(data.baby.surnames);
-                let lastName2 = getRandom(data.baby.surnames);
-                while(lastName1 === lastName2) lastName2 = getRandom(data.baby.surnames);
-                resultName = `${firstName} ${lastName1} ${lastName2}`;
-                
-                // Mother Name
-                const momFirst = getRandom(data.baby.gender.feminino.classic);
-                const momName = `${momFirst} ${lastName1}`;
-
-                // Account info
-                const cleanFirst = removeAccents(firstName).toLowerCase();
-                const cleanLast = removeAccents(lastName2).toLowerCase();
-                const username = `${cleanFirst}.${cleanLast}${getRndNum(10, 999)}`;
-                const email = `${username}${getRandom(data.persona.emails)}`;
-                const password = `${cleanFirst.charAt(0).toUpperCase()}${cleanLast}@${getRndNum(1000,9999)}`;
-
-                // Complex Data objects
-                const birthData = generateBirthDateAndAge(ageGroup);
-                const physicalData = generatePhysical(gender);
-                const cardData = generateCreditCard();
-
-                const persona = {
-                    name: resultName,
-                    mother: momName,
-                    cpf: generateValidCPF(),
-                    rg: generateFakeRG(),
-                    birth: birthData.date,
-                    age: birthData.age + ' anos',
-                    zodiac: birthData.zodiac,
-                    cert: generateFakeCert(),
-                    profession: getRandom(data.persona.professions),
-                    address: generateFakeAddress(),
-                    phone: generatePhone(),
-                    email: email,
-                    user: username,
-                    pass: password,
-                    cardFlag: cardData.flag,
-                    cardNumber: cardData.number,
-                    cardExp: cardData.exp,
-                    cardCvv: cardData.cvv,
-                    company: generateCompany(),
-                    salary: `R$ ${getRndNum(2, 15)}.${getRndNum(100, 999)},00`,
-                    height: physicalData.height,
-                    weight: physicalData.weight,
-                    blood: physicalData.blood,
-                    color: getRandom(data.persona.colors),
-                    plate: generateLicensePlate()
-                };
-                
-                showPersonaResult(persona);
-            }
-
-            // Animate Result Box Container
-            const resBox = document.getElementById('resultBox');
-            resBox.classList.remove('hidden');
-            resBox.classList.remove('fade-in');
-            void resBox.offsetWidth; // Reflow
-            resBox.classList.add('fade-in');
-            resBox.style.display = 'flex';
-        }
-
-        function showBasicResult(name) {
-            const container = document.getElementById('basicResultContainer');
-            const genName = document.getElementById('generatedName');
-            
-            container.classList.remove('hidden');
-            container.classList.add('flex');
-            
-            genName.textContent = name;
-            addToHistory(name, name); // raw text is just the name
-        }
-
-        function showPersonaResult(p) {
-            const container = document.getElementById('personaCardContainer');
-            
-            document.getElementById('personaInitial').textContent = p.name.charAt(0).toUpperCase();
-            document.getElementById('personaName').textContent = p.name;
-            document.getElementById('personaProf').textContent = p.profession;
-            document.getElementById('personaAddressTop').textContent = p.address;
-            
-            document.getElementById('personaCpf').textContent = p.cpf;
-            document.getElementById('personaRg').textContent = p.rg;
-            document.getElementById('personaBirth').textContent = p.birth;
-            document.getElementById('personaAgeVal').textContent = p.age;
-            document.getElementById('personaMother').textContent = p.mother;
-            document.getElementById('personaCert').textContent = p.cert;
-
-            document.getElementById('personaPhone').textContent = p.phone;
-            document.getElementById('personaEmail').textContent = p.email;
-            document.getElementById('personaUser').textContent = p.user;
-            document.getElementById('personaPass').textContent = p.pass;
-
-            document.getElementById('personaCard').textContent = `${p.cardFlag} ${p.cardNumber}`;
-            document.getElementById('personaCardExp').textContent = p.cardExp;
-            document.getElementById('personaCardCvv').textContent = p.cardCvv;
-            document.getElementById('personaCompany').textContent = p.company;
-            document.getElementById('personaSalary').textContent = p.salary;
-
-            document.getElementById('personaHeight').textContent = p.height;
-            document.getElementById('personaWeight').textContent = p.weight;
-            document.getElementById('personaBlood').textContent = p.blood;
-            document.getElementById('personaZodiac').textContent = p.zodiac;
-            document.getElementById('personaColor').textContent = p.color;
-            document.getElementById('personaPlate').textContent = p.plate;
-            
-            // Format raw text for clipboard
-            const rawText = `[ DADOS PESSOAIS ]
-Nome: ${p.name}
-Mãe: ${p.mother}
-CPF: ${p.cpf}
-RG: ${p.rg}
-Data de Nasc: ${p.birth} (${p.age})
-Certidão: ${p.cert}
-
-[ CONTATO & ONLINE ]
-Endereço: ${p.address}
-Celular: ${p.phone}
-E-mail: ${p.email}
-Usuário: ${p.user}
-Senha: ${p.pass}
-
-[ FINANCEIRO & PROFISSIONAL ]
-Profissão: ${p.profession}
-Empresa: ${p.company}
-Renda: ${p.salary}
-Cartão: ${p.cardFlag} ${p.cardNumber}
-Validade: ${p.cardExp} | CVV: ${p.cardCvv}
-
-[ CARACTERÍSTICAS FÍSICAS & MISC ]
-Altura: ${p.height} | Peso: ${p.weight}
-Tipo Sanguíneo: ${p.blood}
-Signo: ${p.zodiac}
-Cor Favorita: ${p.color}
-Placa de Veículo: ${p.plate}
-
-*Gerado via Nomatize (Dados 100% Fictícios)*`;
-
-            lastGeneratedPersona = rawText;
-
-            container.classList.remove('hidden');
-            container.classList.add('flex');
-            
-            addToHistory(p.name, rawText);
-        }
-
-        // History Management
-        function addToHistory(displayName, rawDataToCopy) {
-            // Check if name already in history (prevent duplicates based on name)
-            if (historyList.some(item => item.name === displayName)) return;
-            
-            historyList.unshift({ name: displayName, raw: rawDataToCopy });
-            if (historyList.length > 5) historyList.pop();
-            renderHistory();
-        }
-
-        function renderHistory() {
-            const container = document.getElementById('historyContainer');
-            if (historyList.length === 0) {
-                container.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm italic">O histórico aparecerá aqui...</p>';
-                return;
-            }
-            
-            container.innerHTML = historyList.map((item, index) => `
-                <button onclick="copyFromHistory(${index})" class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-sm font-semibold text-slate-700 dark:text-slate-200 shadow-sm hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50 flex items-center gap-2 group">
-                    ${item.name}
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 group-hover:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                </button>
-            `).join('');
-        }
-
-        // Copy Logic
-        window.copyText = function(text, customMessage = "Copiado!") {
-            navigator.clipboard.writeText(text).then(() => {
-                const toast = document.getElementById('copyToast');
-                toast.textContent = customMessage;
-                toast.style.opacity = '1';
-                toast.style.transform = 'translateY(0)';
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateY(8px)';
-                }, 2000);
-            }).catch(err => console.error('Erro ao copiar', err));
-        }
-
-        window.copyFromHistory = function(index) {
-            const item = historyList[index];
-            if (item) {
-                // If it's a long persona text, show specific message
-                const msg = item.raw.includes('CPF:') ? "Ficha da Persona Copiada!" : "Nome Copiado!";
-                window.copyText(item.raw, msg);
-            }
-        }
-
-        // Initialization & Event Listeners
-        function initApp() {
-            // Tabs logic
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    // Visual reset
-                    document.querySelectorAll('.tab-btn').forEach(b => {
-                        b.classList.remove('active', 'text-slate-900', 'dark:text-white', 'text-amber-600', 'dark:text-amber-500');
-                        b.classList.add('text-slate-500', 'dark:text-slate-400');
-                    });
-                    
-                    // Activate current tab
-                    const targetBtn = e.currentTarget;
-                    currentCategory = targetBtn.dataset.target;
-                    
-                    targetBtn.classList.add('active');
-                    targetBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
-                    
-                    if (currentCategory === 'persona') {
-                        targetBtn.classList.add('text-amber-600', 'dark:text-amber-500');
-                    } else {
-                        targetBtn.classList.add('text-slate-900', 'dark:text-white');
-                    }
-                    
-                    // Load specific filters with fade
-                    const filtersContainer = document.getElementById('filters-container');
-                    filtersContainer.style.opacity = '0';
-                    setTimeout(() => {
-                        filtersContainer.innerHTML = filterConfigs[currentCategory];
-                        filtersContainer.style.opacity = '1';
-                    }, 150);
-                    
-                    // Hide results
-                    const resBox = document.getElementById('resultBox');
-                    resBox.style.display = 'none';
-                    resBox.classList.add('hidden');
-                });
-            });
-
-            // Action Buttons
-            document.getElementById('generateBtn').addEventListener('click', generateName);
-            
-            document.getElementById('copyBasicBtn').addEventListener('click', () => {
-                window.copyText(document.getElementById('generatedName').textContent, "Nome Copiado!");
-            });
-
-            document.getElementById('copyPersonaBtn').addEventListener('click', () => {
-                if (lastGeneratedPersona) {
-                    window.copyText(lastGeneratedPersona, "Ficha da Persona Copiada!");
-                }
-            });
-
-            // Theme Toggle Logic
-            const themeToggleBtn = document.getElementById('themeToggle');
-            const htmlElement = document.documentElement;
-            
-            const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
-            const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
-
-            function updateThemeIcon() {
-                themeToggleBtn.innerHTML = htmlElement.classList.contains('dark') ? sunIcon : moonIcon;
-            }
-
-            themeToggleBtn.addEventListener('click', () => {
-                htmlElement.classList.toggle('dark');
-                updateThemeIcon();
-            });
-
-            // Boot initialization
-            document.getElementById('filters-container').innerHTML = filterConfigs.baby;
-            updateThemeIcon();
-        }
-
-        document.addEventListener('DOMContentLoaded', initApp);
-    </script>
 </body>
 </html>

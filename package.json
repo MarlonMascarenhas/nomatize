@@ -1,0 +1,12 @@
+{
+  "name": "nomatize",
+  "version": "2.0.0",
+  "description": "Gerador Inteligente de Nomes — Algoritmo combinatório com sílabas de 10 origens linguísticas",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/generators.test.js",
+    "start": "npx serve ."
+  },
+  "keywords": ["gerador-de-nomes", "nomes-bebe", "nomes-empresa", "significado-nomes"],
+  "license": "MIT"
+}
